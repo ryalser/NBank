@@ -1,0 +1,161 @@
+## 0. ПОДГОТОВКА ДАННЫХ
+
+### Админ: создает пользователей
+## Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "Pavel",
+  "password": "pavelPassword33$",
+  "role": "USER"
+}
+
+### Админ: Получить список пользователей
+GET http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+### Пользователь создает аккаунт
+POST http://localhost:4111/api/v1/accounts
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "id": 1,
+  "accountNumber": "ACC1",
+  "balance": 0,
+  "transactions": []
+}
+
+### Пользователь: проверяет свой аккаунт
+GET http://localhost:4111//api/v1/customer/accounts
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+
+
+
+## НАЧИНАЕМ ПРОВЕРКИ
+## 1. Депозит денег пользователем
+
+
+### 1.1 Позитивный сценарий: максимальная сумма 5000, положительная, на свой существующий аккаунт
+POST http://localhost:4111/api/v1/accounts/deposit
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "id": 4,
+  "balance": 100
+}
+
+### 1.2 Негативный сценарий: сумма 5001 - больше максимальной
+## Будет ошибка: пополнение возможно более 5000
+POST http://localhost:4111/api/v1/accounts/deposit
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "id": 4,
+  "balance": 5001
+}
+
+### 1.3 Негативный сценарий: сумма <0 - меньше минимальной
+POST http://localhost:4111/api/v1/accounts/deposit
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "id": 4,
+  "balance": -1
+}
+
+### 1.4 Негативный сценарий: пополнение <=5000 на чужой счет
+## Будет ошибка: пользователь Pavel  под своим акком закинул деньги на другой счет и получил успех
+POST http://localhost:4111/api/v1/accounts/deposit
+Content-Type: application/json
+Authorization: Basic YWxleDk3OnZlcnlzVFJvbmdQYXNzd29yZDMzJA==
+
+{
+  "id": 2,
+  "balance": 100
+}
+
+### 1.5 Негативный сценарий: пополнение на <=5000 на несуществующий счет
+POST http://localhost:4111/api/v1/accounts/deposit
+Content-Type: application/json
+Authorization: Basic YWxleDk3OnZlcnlzVFJvbmdQYXNzd29yZDMzJA==
+
+{
+  "id": 22,
+  "balance": 100
+}
+
+
+###
+## 2. Перевод денег с одного аккаунта на другой
+
+### 2.1 Позитивный сценарий: перевод денег на другой акк - сумма в рамках баланса, не больше 10000, переведена между своими
+POST http://localhost:4111/api/v1/accounts/transfer
+Content-Type: application/json
+Authorization: Basic YWxleDk3OnZlcnlzVFJvbmdQYXNzd29yZDMzJA==
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 100
+}
+
+### 2.2 Негативный сценарий: сумма больше баланса
+POST http://localhost:4111/api/v1/accounts/transfer
+Content-Type: application/json
+Authorization: Basic YWxleDk3OnZlcnlzVFJvbmdQYXNzd29yZDMzJA==
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 8000
+}
+
+### 2.3 Негативный сценарий: сумма больше максимально допустимой
+POST http://localhost:4111/api/v1/accounts/transfer
+Content-Type: application/json
+Authorization: Basic YWxleDk3OnZlcnlzVFJvbmdQYXNzd29yZDMzJA==
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 10001
+}
+
+### 2.4 Негативный сценарий: сумма отрицательна
+POST http://localhost:4111/api/v1/accounts/transfer
+Content-Type: application/json
+Authorization: Basic YWxleDk3OnZlcnlzVFJvbmdQYXNzd29yZDMzJA==
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": -1
+}
+
+### 2.5 Негативный сценарий: аккаунт с таким id не существует
+POST http://localhost:4111/api/v1/accounts/transfer
+Content-Type: application/json
+Authorization: Basic YWxleDk3OnZlcnlzVFJvbmdQYXNzd29yZDMzJA==
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 22,
+  "amount": 10001
+}
+
+
+###
+## 3. Изменение имени пользователя
+
+### Посмотрим имя пользователя - "name": null
+GET http://localhost:4111/api/v1/customer/profile
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
