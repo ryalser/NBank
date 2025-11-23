@@ -1,3 +1,5 @@
+
+
 ## 0. ПОДГОТОВКА ДАННЫХ
 
 ### Админ: создает пользователей
@@ -159,3 +161,72 @@ Authorization: Basic YWxleDk3OnZlcnlzVFJvbmdQYXNzd29yZDMzJA==
 ### Посмотрим имя пользователя - "name": null
 GET http://localhost:4111/api/v1/customer/profile
 Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+
+### 3.1 Позитивный сценарий: пользователь меняет name - Два слова, состоящее из букв, разделенные пробелом
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "name": "New Name"
+}
+
+### 3.2 Негативный сценарий: одно слово в name
+## Будет ошибка: в name можно записать одно слово
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "name": "One"
+}
+
+### 3.3 Негативный: три слова вместо двух
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "name": "New Name Test"
+}
+
+### 3.4 Негативный сценарий: пустое имя
+## Будет ошибка: в name можно записать пустое значение
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "name": ""
+}
+
+### 3.5 Негативный сценарий: два слова разделенные пробелом, но содержат цифру
+## Будет ошибка: в name можно записать невалидное значение с цифрой в слове
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "name": "New Name1"
+}
+
+### 3.6 Негативный сценарий: два слова,пробел в конце
+## Будет ошибка: в name можно записать невалидное значение
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "name": "NewName "
+}
+
+### 3.7 Негативный: только пробелы
+## Будет ошибка: в name можно записать только пробелы
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic UGF2ZWw6cGF2ZWxQYXNzd29yZDMzJA==
+
+{
+  "name": "   "
+}
