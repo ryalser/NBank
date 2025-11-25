@@ -1,0 +1,73 @@
+###План разработки тестов для задания по API тестам уровня джуниор.
+
+Как это выглядело бы в свагере?
+
+###Задание: 1. Депозит денег пользователем
+
+0. Авторизуемся админом и переходим к методу /api/v1/admin/users для создания юзера.
+{
+  "username": "kate1998",
+  "password": "verysTRongPassword33$",
+  "role": "USER"
+}
+
+Ожидаем статус 201 и тело:
+{
+  "id": 1,
+  "username": "kate1998",
+  "password": "$2a$10$12bvPu1zzuXZPL.WId1.eeQSSQKMImmK0nTaZ3L9cOC9be4qJrtn.",
+  "name": null,
+  "role": "USER",
+  "accounts": []
+}
+
+Юзера с данным username и password берем и идем далее.
+
+1. Пользователь авторизуется и получает токен в методе /api/v1/auth/login
+{
+  "username": "kate1998",
+  "password": "verysTRongPassword33$"
+}
+
+Ожидаем статус 201 и тело:
+{
+  "role": "USER",
+  "username": "kate1998"
+}
+
+А также в хедерах его токен:
+authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+
+2. С полученным токеном юзер идет в метод /api/v1/accounts и создает аккаунт.
+Данные аккаунта необходимо запомнить.
+
+Ожидаем статус 200 и тело:
+{
+  "id": 1,
+  "accountNumber": "ACC1",
+  "balance": 0,
+  "transactions": []
+}
+
+
+3. С полученным токеном юзер выполняет пополнение на свой аккаунт в методе /api/v1/accounts:
+{
+  "id": 1,           // id user account
+  "balance": 100.5
+}
+
+Ожидаем статус 200 и тело:
+{
+  "id": 1,
+  "accountNumber": "ACC1",
+  "balance": 100.5,
+  "transactions": [
+    {
+      "id": 1,
+      "amount": 100.5,
+      "type": "DEPOSIT",
+      "timestamp": "Tue Nov 25 15:31:31 UTC 2025",
+      "relatedAccountId": 1
+    }
+  ]
+}
