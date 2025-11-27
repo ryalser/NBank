@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 
+
 public class CreateUserTest extends BaseTest {
     // Админ создает юзера
     @Test
@@ -30,7 +31,7 @@ public class CreateUserTest extends BaseTest {
                 .body("username", Matchers.equalTo("kate2003"));
 
         // Юзер получает токен
-        String user_auth_token = given()
+        userAuthToken = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body("""
@@ -49,10 +50,10 @@ public class CreateUserTest extends BaseTest {
                 .header("Authorization");
 
         // Юзер создает себе аккаунт
-        given()
+       io.restassured.response.Response response = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .header("Authorization", user_auth_token)
+                .header("Authorization", userAuthToken)
         .when()
                 .post(BASE_URL + "/api/v1/accounts")
         .then()
@@ -60,6 +61,15 @@ public class CreateUserTest extends BaseTest {
                 .statusCode(HttpStatus.SC_CREATED)
                 .body("id", Matchers.notNullValue())
                 .body("accountNumber", Matchers.notNullValue())
-                .body("balance", Matchers.equalTo(0.0F));
+                .body("balance", Matchers.equalTo(0.0F))
+                .extract()
+                .response();
+
+       // Запишем полученный данные - будут использоваться для других тестов
+        accountId = response.path("id");
+        accountNumber = response.path("accountNumber");
+
+        System.out.println("Account ID: " + accountId);
+        System.out.println("AccountNumber: " + accountNumber);
     }
 }
