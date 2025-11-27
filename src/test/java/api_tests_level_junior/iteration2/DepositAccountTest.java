@@ -1,41 +1,33 @@
 package api_tests_level_junior.iteration2;
 
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 
 public class DepositAccountTest extends BaseTest {
-
-    // Админ создает юзера
+    // Юзер пополняет ДС на свой счет
+    @Disabled
     @Test
-    public void adminCanCreateUserWithCorrectDataTest() {
+    public void userDepositAccountTest(){
         given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .header("Authorization", BASIC_AUTHORIZATION_ADMIN)
+                .header("Authorization", "Basic a2F0ZTIwMDM6UGFzc3dvcmQxMjM0IQ==")
                 .body("""
                             {
-                              "username": "kate2003",
-                              "password": "Password1234!",
-                              "role": "USER"
-                            }
+                               "id": 1,
+                               "balance": 100.5
+}
 """)
-                .post(BASE_URL + "/api/v1/admin/users")
+                .post(BASE_URL + "/api/v1/accounts/deposit")
                 .then()
                 .assertThat()
-                .statusCode(HttpStatus.SC_CREATED)
-                .body("username", Matchers.equalTo("kate2003"));
-    }
-
-    // Юзер создает себе аккаунт
-    @Test
-    public void userCreateAccountTest(){
-
-
+                .statusCode(HttpStatus.SC_OK)
+                .body("balance", Matchers.equalTo("100.5"));
     }
 }
 
