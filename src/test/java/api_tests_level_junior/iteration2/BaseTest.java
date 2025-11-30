@@ -9,11 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import java.util.List;
 
 public class BaseTest {
-    protected static final String BASE_URL = "http://localhost:4111";
-    protected static final String BASIC_AUTHORIZATION_ADMIN = "Basic YWRtaW46YWRtaW4=";
-    protected static String userAuthToken;
-    protected static int accountId;
-    protected static String accountNumber;
+    public static final String BASE_URL = "http://localhost:4111";
+    public static final String BASIC_AUTHORIZATION_ADMIN = "Basic YWRtaW46YWRtaW4=";
 
     @BeforeAll
     public static void setupRestAssured(){
