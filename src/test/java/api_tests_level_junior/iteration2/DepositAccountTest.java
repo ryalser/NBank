@@ -9,8 +9,8 @@ import static io.restassured.RestAssured.given;
 
 public class DepositAccountTest extends BaseTest {
 
+    // Позитивный
     // Юзер пополняет ДС на свой счет
-    // Позитивный сценарий проверок
     @Test
     public void userDepositAccountWithCorrectDataTest(){
         UserAccount user1 = new UserAccount("kate1999","verysTRongPassword34$");
