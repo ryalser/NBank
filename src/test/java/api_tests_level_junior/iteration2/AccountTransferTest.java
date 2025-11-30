@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 
 public class AccountTransferTest extends BaseTest {
+    // Позитивный
     // Тест перевода ДС между аккаунтами
     @Test
     public void userTransfersMoneyToAnotherAccounts(){
@@ -22,7 +23,7 @@ public class AccountTransferTest extends BaseTest {
                 .body(String.format("""
                                         {
                                            "id": %d,
-                                           "balance": 100.5
+                                           "balance": 100.55
                                         }
 """, userSenders.getAccountId()))
         .when()
@@ -63,5 +64,93 @@ public class AccountTransferTest extends BaseTest {
                 .body("[0].id", Matchers.equalTo(userReceiver.getAccountId()))
                 .body("[0].balance", Matchers.equalTo(50.5F));
 
+    }
+
+    // Негативный
+    // Перевод суммы превышающей баланс юзера
+    @Test
+    public void userTransfersMoneyToAnotherAccountsButNotEnoughFunds(){
+        UserAccount userSender = new UserAccount("oleg1999","olegPassword34$");
+        UserAccount userReceiver = new UserAccount("dima1999","dimaPassword34$");
+
+        // Юзер пополняет баланс
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .header("Authorization",userSender.getUserAuthToken())
+                .body(String.format("""
+                                        {
+                                           "id": %d,
+                                           "balance": 100.55
+                                        }
+""", userSender.getAccountId()))
+         .when()
+                .post(BASE_URL + "/api/v1/accounts/deposit")
+         .then()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK);
+
+        // Отправитель переводит ДС на счет получателя, но средст НЕДОСТАТОЧНО
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .header("Authorization",userSender.getUserAuthToken())
+                .body(String.format("""
+                                        {
+                                           "senderAccountId": %d,
+                                           "receiverAccountId": %d,
+                                           "amount": 5000.5
+                                        }
+""", userSender.getAccountId(), userReceiver.getAccountId()))
+        .when()
+                .post(BASE_URL + "/api/v1/accounts/transfer")
+        .then()
+                .assertThat()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body(Matchers.equalTo("Invalid transfer: insufficient funds or invalid accounts"));
+    }
+
+    // Негативный
+    // Перевод отрицательной суммы
+    @Test
+    public void userTransfersMoneyWithNegativeAmountShouldFail(){
+        UserAccount userSender = new UserAccount("marina1999","marinaPassword34$");
+        UserAccount userReceiver = new UserAccount("olga1999","olgaPassword34$");
+
+        // Юзер пополняет баланс
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .header("Authorization",userSender.getUserAuthToken())
+                .body(String.format("""
+                                        {
+                                           "id": %d,
+                                           "balance": 100.55
+                                        }
+""", userSender.getAccountId()))
+                .when()
+                .post(BASE_URL + "/api/v1/accounts/deposit")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK);
+
+        // Отправитель переводит ДС на счет получателя, но средст НЕДОСТАТОЧНО
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .header("Authorization",userSender.getUserAuthToken())
+                .body(String.format("""
+                                        {
+                                           "senderAccountId": %d,
+                                           "receiverAccountId": %d,
+                                           "amount": -5000.5
+                                        }
+""", userSender.getAccountId(), userReceiver.getAccountId()))
+                .when()
+                .post(BASE_URL + "/api/v1/accounts/transfer")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
+                .body(Matchers.equalTo("Transfer amount must be at least 0.01"));
     }
 }
