@@ -19,10 +19,10 @@ public class DepositAccountTest extends BaseTest {
                 .accept(ContentType.JSON)
                 .header("Authorization", user1.getUserAuthToken())
                 .body(String.format("""
-    {
-        "id": %d,
-        "balance": 100.5
-    }
+                                        {
+                                           "id": %d,
+                                           "balance": 100.5
+                                        }
 """, user1.getAccountId()))
         .when()
                 .post(BASE_URL + "/api/v1/accounts/deposit")
@@ -32,7 +32,8 @@ public class DepositAccountTest extends BaseTest {
                 .body("balance", Matchers.equalTo(100.5F));
     }
 
-    // Негативный тест на пополнение неверного аккаунта
+    // Негативный
+    // Пополнение неверного аккаунта
     @Test
     public void userDepositAccountWithIncorrectDataTest(){
         UserAccount user2 = new UserAccount("alex1999","AlexPassword34$");
@@ -41,10 +42,10 @@ public class DepositAccountTest extends BaseTest {
                 .accept(ContentType.JSON)
                 .header("Authorization",user2.getUserAuthToken())
                 .body(String.format("""
-    {
-        "id": %d,
-        "balance": 100.5
-    }
+                                        {
+                                           "id": %d,
+                                           "balance": 100.5
+                                        }
 """, 1234))
         .when()
                 .post(BASE_URL + "/api/v1/accounts/deposit")
@@ -62,10 +63,10 @@ public class DepositAccountTest extends BaseTest {
                 .accept(ContentType.JSON)
                 .header("Authorization",user3.getUserAuthToken())
                 .body(String.format("""
-    {
-        "id": %d
-        "balance": 100.5
-    }
+                                        {
+                                           "id": %d
+                                           "balance": 100.5
+                                        }
 """, user3.getAccountId()))
       .when()
                 .post(BASE_URL + "/api/v1/accounts/deposit")
