@@ -3,16 +3,18 @@ package api_tests_level_junior.iteration2;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 
 
-public class CreateUser extends BaseTest {
+public class UserAccount extends BaseTest {
     private final String userAuthToken;
     private final int accountId;
     private final String accountNumber;
 
     // Конструктор класса - админом создается юзер с аккаунтом - это мои базовые тестовые данные для всех тестов
-    public CreateUser(String username, String password) {
+    public UserAccount(String username, String password) {
         // Создаем пользователя
         given()
                 .contentType(ContentType.JSON)
@@ -59,5 +61,25 @@ public class CreateUser extends BaseTest {
 
     public String getAccountNumber() {
         return accountNumber;
+    }
+
+    // Удаляем всех юзеров
+    public static void cleanUsersData(){
+        List<Integer> usersId = given()
+                .header("Authorization", BASIC_AUTHORIZATION_ADMIN)
+                .get(BASE_URL + "/api/v1/admin/users")
+                .then()
+                .extract()
+                .jsonPath()
+                .getList("id");
+
+        for(Integer id : usersId){
+            if(id == null){
+                System.out.println("Список юзеров пуст.");
+            }
+            given()
+                    .header("Authorization", BASIC_AUTHORIZATION_ADMIN)
+                    .delete(BASE_URL + "/api/v1/admin/users/" + id);
+        }
     }
 }

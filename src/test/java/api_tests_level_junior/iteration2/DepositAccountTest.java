@@ -13,7 +13,7 @@ public class DepositAccountTest extends BaseTest {
     // Позитивный сценарий проверок
     @Test
     public void userDepositAccountWithCorrectDataTest(){
-        CreateUser user1 = new CreateUser("kate1999","verysTRongPassword34$");
+        UserAccount user1 = new UserAccount("kate1999","verysTRongPassword34$");
         given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -35,7 +35,7 @@ public class DepositAccountTest extends BaseTest {
     // Негативный тест на пополнение неверного аккаунта
     @Test
     public void userDepositAccountWithIncorrectDataTest(){
-        CreateUser user2 = new CreateUser("alex1999","AlexPassword34$");
+        UserAccount user2 = new UserAccount("alex1999","AlexPassword34$");
         given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -56,7 +56,7 @@ public class DepositAccountTest extends BaseTest {
     // Негативный тест на некорректный JSON
     @Test
     public void userDepositAccountWithIncorrectRequestDataTest(){
-        CreateUser user3 = new CreateUser("victor1999","VictorPassword34$");
+        UserAccount user3 = new UserAccount("victor1999","VictorPassword34$");
         given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
