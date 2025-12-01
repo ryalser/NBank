@@ -6,6 +6,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AccountTransferTest extends BaseTest {
     // Позитивный
@@ -64,6 +65,11 @@ public class AccountTransferTest extends BaseTest {
                 .body("[0].id", Matchers.equalTo(userReceiver.getAccountId()))
                 .body("[0].balance", Matchers.equalTo(50.5F));
 
+        float balanceReceiver = userReceiver.getBalanceAccount(userReceiver.getUserAuthToken());// баланс получателя
+        float balanceSender = userSenders.getBalanceAccount(userSenders.getUserAuthToken()); // баланс отправителя
+
+        assertEquals(50.5, balanceReceiver, "Баланс получателя должен быть: 50.5");
+        assertEquals(50.05, balanceSender, 0.01F, "Баланс отправителя должен быть уменьшен до: 50.05");
     }
 
     // Негативный
@@ -108,6 +114,12 @@ public class AccountTransferTest extends BaseTest {
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(Matchers.equalTo("Invalid transfer: insufficient funds or invalid accounts"));
+
+        float balanceReceiver = userReceiver.getBalanceAccount(userReceiver.getUserAuthToken());// баланс получателя
+        float balanceSender = userSender.getBalanceAccount(userSender.getUserAuthToken()); // баланс отправителя
+
+        assertEquals(0, balanceReceiver, "Баланс получателя должен остаться: 0");
+        assertEquals(100.55, balanceSender, 0.01F, "Баланс отправителя должен остаться: 100.55");
     }
 
     // Негативный
@@ -152,5 +164,11 @@ public class AccountTransferTest extends BaseTest {
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(Matchers.equalTo("Transfer amount must be at least 0.01"));
+
+        float balanceReceiver = userReceiver.getBalanceAccount(userReceiver.getUserAuthToken());// баланс получателя
+        float balanceSender = userSender.getBalanceAccount(userSender.getUserAuthToken()); // баланс отправителя
+
+        assertEquals(0, balanceReceiver, "Баланс получателя должен остаться: 0");
+        assertEquals(100.55, balanceSender, 0.01F, "Баланс отправителя должен остаться: 100.55");
     }
 }

@@ -6,6 +6,8 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class UserChangesUsernameTest extends BaseTest {
 
@@ -30,6 +32,9 @@ public class UserChangesUsernameTest extends BaseTest {
                 .assertThat()
                 .statusCode(HttpStatus.SC_OK)
                 .body("customer.name", Matchers.equalTo("New Name"));
+
+        String nameUser = kate2006.getNameUser(kate2006.getUserAuthToken());
+        assertEquals("New Name", nameUser, "Имя юзера не установлено");
     }
 
     // Негативный
@@ -53,10 +58,12 @@ public class UserChangesUsernameTest extends BaseTest {
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(Matchers.equalTo("Name must contain two words with letters only"));
+
+        assertNull(kate2007.getNameUser(kate2007.getUserAuthToken()),"Дефолтное значение name не должно меняться.");
     }
 
     // Негативный
-    // Пользователь изменяет имя и забывает пробел
+    // Пользователь изменяет имя пустым значением
     @Test
     public void userChangesUsernameWithEmptyValueTest(){
         UserAccount kate2008 = new UserAccount("Kate2008","MichailPassword34$");
@@ -76,5 +83,7 @@ public class UserChangesUsernameTest extends BaseTest {
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .body(Matchers.equalTo("Name must contain two words with letters only"));
+
+        assertNull(kate2008.getNameUser(kate2008.getUserAuthToken()),"Дефолтное значение name не должно меняться.");
     }
 }

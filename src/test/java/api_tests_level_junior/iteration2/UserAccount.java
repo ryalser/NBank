@@ -63,7 +63,7 @@ public class UserAccount extends BaseTest {
         return accountNumber;
     }
 
-    // Удаляем всех юзеров
+    // Удалить всех юзеров
     public static void cleanUsersData(){
         List<Integer> usersId = given()
                 .header("Authorization", BASIC_AUTHORIZATION_ADMIN)
@@ -81,5 +81,33 @@ public class UserAccount extends BaseTest {
                     .header("Authorization", BASIC_AUTHORIZATION_ADMIN)
                     .delete(BASE_URL + "/api/v1/admin/users/" + id);
         }
+    }
+
+    // Получить баланс
+    public float getBalanceAccount(String userAuthToken){
+        return given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .header("Authorization",userAuthToken)
+               .when()
+                .get(BASE_URL + "/api/v1/customer/accounts")
+               .then()
+                .extract()
+                .jsonPath()
+                .getFloat("[0].balance"); // смотрим баланс первого аккаунта
+    }
+
+    // Получить name юзера
+    public String getNameUser(String userAuthToken){
+        return given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .header("Authorization",userAuthToken)
+               .when()
+                .get(BASE_URL + "/api/v1/customer/profile")
+               .then()
+                .extract()
+                .jsonPath()
+                .getString("name");
     }
 }

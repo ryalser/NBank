@@ -6,6 +6,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DepositAccountTest extends BaseTest {
 
@@ -30,6 +31,9 @@ public class DepositAccountTest extends BaseTest {
                 .assertThat()
                 .statusCode(HttpStatus.SC_OK)
                 .body("balance", Matchers.equalTo(100.5F));
+
+        float balanceUser = user1.getBalanceAccount(user1.getUserAuthToken());
+        assertEquals(100.5, balanceUser, "Баланс юзера должен быть: 100.5");
     }
 
     // Негативный
@@ -52,6 +56,9 @@ public class DepositAccountTest extends BaseTest {
         .then()
                 .assertThat()
                 .statusCode(HttpStatus.SC_FORBIDDEN);
+
+        float balanceUser = user2.getBalanceAccount(user2.getUserAuthToken());
+        assertEquals(0, balanceUser, "Баланс юзера должен быть: 0 т.к. пополнения на неверный аккаунт невозможно");
     }
 
     // Негативный тест на некорректный JSON
@@ -73,6 +80,9 @@ public class DepositAccountTest extends BaseTest {
       .then()
                 .assertThat()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
+
+        float balanceReceiver = user3.getBalanceAccount(user3.getUserAuthToken());// баланс юзера
+        assertEquals(0, balanceReceiver, "Баланс юзера должен остаться: 0");
     }
 }
 
