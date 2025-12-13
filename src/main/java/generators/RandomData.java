@@ -16,4 +16,8 @@ public class RandomData {
                 RandomStringUtils.randomNumeric(3) + // 3 цифры
                 "$"; // доп. символ
     }
+
+    public static String getName() {
+        return RandomStringUtils.randomAlphabetic(6); // Рандомное имя пользователя
+    }
 }

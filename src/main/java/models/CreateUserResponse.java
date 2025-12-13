@@ -5,13 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserRequest extends BaseModel {
-    // Данные пользователя
+public class CreateUserResponse extends BaseModel {
+    private int id;
     private String username;
     private String password;
+    private String name;
     private String role;
+    private List<String> accounts;
 }
