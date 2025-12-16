@@ -11,9 +11,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DepositResponse extends BaseModel {
+public class UserCreateAccountResponse extends BaseModel {
+    // Модель ответа при запросе: POST /api/v1/accounts (создание аккаунта)
     private int id;
     private String accountNumber;
     private double balance;
-    private List<Transaction> transactions;
+    private List<String> transactions;
 }
