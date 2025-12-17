@@ -7,7 +7,7 @@ import models.LoginUserRequest;
 
 import static io.restassured.RestAssured.given;
 
-public class LoginUserRequester extends Request<LoginUserRequest> {
+public class LoginUserRequester extends PostRequest<LoginUserRequest> {
     public LoginUserRequester(RequestSpecification requestSpecification, ResponseSpecification responseSpecification) {
         super(requestSpecification, responseSpecification);
     }

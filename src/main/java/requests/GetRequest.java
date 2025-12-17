@@ -5,14 +5,14 @@ import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import models.BaseModel;
 
-public abstract class Request<T extends BaseModel> {
+public abstract class GetRequest <T extends BaseModel> {
     protected RequestSpecification requestSpecification;
     protected ResponseSpecification responseSpecification;
 
-    public Request(RequestSpecification requestSpecification, ResponseSpecification responseSpecification){
+    public GetRequest(RequestSpecification requestSpecification, ResponseSpecification responseSpecification){
         this.requestSpecification = requestSpecification;
         this.responseSpecification =responseSpecification;
     }
 
-    public abstract ValidatableResponse post(T model);
+    public abstract ValidatableResponse get(T model);
 }
