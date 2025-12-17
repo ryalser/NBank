@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserCreateAccountResponse extends BaseModel {
-    // Модель ответа при запросе: POST /api/v1/accounts (создание аккаунта)
+    // Модель ответа /api/v1/accounts (создание аккаунта)
     private int id;
     private String accountNumber;
     private double balance;

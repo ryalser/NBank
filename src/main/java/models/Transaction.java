@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction extends BaseModel {
+    // Модель ответа при получении массива транзакций
     private int id;
     private double amount;
     private String type;

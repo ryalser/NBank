@@ -5,8 +5,6 @@ import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import models.BaseModel;
 
-import static io.restassured.RestAssured.given;
-
 public abstract class PostRequest<T extends BaseModel> {
     protected RequestSpecification requestSpecification;
     protected ResponseSpecification responseSpecification;

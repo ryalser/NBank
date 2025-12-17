@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DepositResponse extends BaseModel {
+    // Модель ответа /api/v1/accounts/deposit
     private int id;
     private String accountNumber;
     private double balance;

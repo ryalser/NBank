@@ -13,7 +13,6 @@ import java.util.List;
 public class RequestsSpecs {
     private RequestsSpecs() {}
 
-    // Базовый URL
     private static final String BASE_URL = "http://localhost:4111";
 
     // Базовый билдер для всех спецификаций; будет использован в спеках админа и юзера

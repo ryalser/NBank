@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateUserResponse extends BaseModel {
+    // Модель ответа /api/v1/admin/users
     private int id;
     private String username;
     private String password;

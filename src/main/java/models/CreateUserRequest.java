@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateUserRequest extends BaseModel {
-    // Данные пользователя
+    // Модель запроса /api/v1/admin/users
     private String username;
     private String password;
     private String role;

@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetUserAccountsResponse extends BaseModel {
+    // Модель ответа /api/v1/customer/accounts
     private int id;
     private String accountNumber;
     private double balance;

@@ -3,14 +3,10 @@ package specs;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.ResponseSpecification;
 import org.apache.http.HttpStatus;
-import org.apache.http.impl.bootstrap.HttpServer;
 import org.hamcrest.Matchers;
-
-import java.net.http.HttpClient;
 
 public class ResponseSpecs {
     private ResponseSpecs() {}
-
     private static ResponseSpecBuilder defaultResponseBuilder() {
         return new ResponseSpecBuilder();
     }

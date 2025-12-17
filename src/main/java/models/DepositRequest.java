@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DepositRequest extends BaseModel {
-    private int id; // id аккаунта для пополнения
-    private double balance; // Сумма пополнения
+    // Модель запроса /api/v1/accounts/deposit
+    private int id;
+    private double balance;
 }
