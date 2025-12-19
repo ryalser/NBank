@@ -1,4 +1,4 @@
-package iteration_2;
+package api_tests_level_middle.iteration_2;
 
 import generators.RandomData;
 import models.*;
@@ -31,9 +31,8 @@ public class UserDepositTest extends BaseTest {
         adminRequester.post(userRequest); // создали пользователя
 
         // 2. ПОЛЬЗОВАТЕЛЬ СОЗДАЕТ СЕБЕ АККАУНТ
-        // authAsUser() сам сделает логин при первом вызове
         CreateAccountRequester createAccountRequester = new CreateAccountRequester(
-                RequestsSpecs.authAsUser(username, password), // ← ЗДЕСЬ ПРОИСХОДИТ ПЕРВЫЙ ЛОГИН
+                RequestsSpecs.authAsUser(username, password),
                 ResponseSpecs.entityWasCreated()
         );
 
@@ -43,22 +42,27 @@ public class UserDepositTest extends BaseTest {
 
         int accountId = userCreateAccountResponse.getId();
 
-        // 3. ДЕЛАЕМ ДЕПОЗИТ
+        // 3. ДЕЛАЕТ ДЕПОЗИТ
         DepositRequest depositRequest = DepositRequest.builder()
                 .id(accountId)
                 .balance(100)
                 .build();
 
         DepositRequester depositRequester = new DepositRequester(
-                RequestsSpecs.authAsUser(username, password), // ← здесь второй логин (но можно оптимизировать)
+                RequestsSpecs.authAsUser(username, password),
                 ResponseSpecs.requestReturnsOk()
         );
 
-        depositRequester.post(depositRequest);
+        DepositResponse depositResponse = depositRequester.post(depositRequest)
+                .extract()
+                .as(DepositResponse.class);
 
-        // 4. ПРОВЕРКА ЧЕРЕЗ GET МЕТОД
+        softly.assertThat(depositResponse.getBalance()).isEqualTo(100);
+        softly.assertThat(depositResponse.getAccountNumber()).isEqualTo(accountId);
+
+        // 4. ПРОВЕРКА ЧЕРЕЗ GET МЕТОД /api/v1/customer/accounts
         GetUserAccountsRequester getUserAccountsRequester = new GetUserAccountsRequester(
-                RequestsSpecs.authAsUser(username, password), // ← здесь третий логин
+                RequestsSpecs.authAsUser(username, password),
                 ResponseSpecs.requestReturnsOk()
         );
 

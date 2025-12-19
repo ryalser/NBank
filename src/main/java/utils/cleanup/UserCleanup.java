@@ -23,6 +23,5 @@ public class UserCleanup {
                     .header("Authorization","Basic YWRtaW46YWRtaW4=")
                     .delete("http://localhost:4111/api/v1/admin/users/" + id);
         }
-
     }
 }
