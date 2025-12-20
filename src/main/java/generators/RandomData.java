@@ -1,6 +1,7 @@
 package generators;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 
 public class RandomData {
     private RandomData(){} // не создавать экземпляров
@@ -20,6 +21,7 @@ public class RandomData {
 
     // Рандомное имя пользователя
     public static String getName() {
-        return RandomStringUtils.randomAlphabetic(6);
+        return RandomStringUtils.randomAlphabetic(4) + " " +
+                RandomStringUtils.randomAlphabetic(4);
     }
 }

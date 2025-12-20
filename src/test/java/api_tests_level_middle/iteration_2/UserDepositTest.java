@@ -92,7 +92,7 @@ public class UserDepositTest extends BaseTest {
     @MethodSource("depositInvalidData")
     @ParameterizedTest
     @DisplayName("Негативный тест: пополнение с невалидными данными")
-    public void depositWithInvalidData(double amountDeposit, String errorValue) {
+    public void depositWithInvalidDataTest(double amountDeposit, String errorValue) {
         // 1. СОЗДАЕМ ЮЗЕРА АДМИНОМ
         String username = RandomData.getUsername();
         String password = RandomData.getPassword();
@@ -151,7 +151,7 @@ public class UserDepositTest extends BaseTest {
 
     @Test
     @DisplayName("Негативный тест: поплнение несуществующего аккаунта")
-    public void depositUserInvalidAccount() {
+    public void depositUserInvalidAccountTest() {
         String username = RandomData.getUsername();
         String password = RandomData.getPassword();
 
@@ -181,6 +181,7 @@ public class UserDepositTest extends BaseTest {
                 .build();
 
         String errorValueWithInvalidAccountId = "Unauthorized access to account";
+        // кажется, в апи не совсем корректно реализован этот момент
 
         DepositRequester depositRequester = new DepositRequester(
                 RequestsSpecs.authAsUser(username, password),
