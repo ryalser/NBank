@@ -17,7 +17,8 @@ public class PutCustomerProfileRequester extends PutRequest<PutCustomerProfileRe
     public ValidatableResponse put(PutCustomerProfileRequest model) {
         return given()
                 .spec(requestSpecification)
-                .get("/api/v1/customer/profile")
+                .body(model)
+                .put("/api/v1/customer/profile")
                 .then()
                 .assertThat()
                 .spec(responseSpecification);
