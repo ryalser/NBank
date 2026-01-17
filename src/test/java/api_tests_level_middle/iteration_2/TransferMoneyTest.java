@@ -12,7 +12,9 @@ import requests.*;
 import specs.RequestsSpecs;
 import specs.ResponseSpecs;
 
-import java.util.Random;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class TransferMoneyTest extends BaseTest {
@@ -42,30 +44,34 @@ public class TransferMoneyTest extends BaseTest {
         CreateAccountRequester createAccountRequester = new CreateAccountRequester(loginUser,
                 ResponseSpecs.entityWasCreated());
 
-        senderAccountId = createAccountRequester.post(null)
+        UserCreateAccountResponse senderAccount = createAccountRequester.post(null)
                 .extract()
-                .jsonPath()
-                .getInt("id");
+                .as(UserCreateAccountResponse.class);
 
-        receiverAccountId = createAccountRequester.post(null)
+        UserCreateAccountResponse receiverAccount = createAccountRequester.post(null)
                 .extract()
-                .jsonPath()
-                .getInt("id");
+                .as(UserCreateAccountResponse.class);
+
+        senderAccountId = senderAccount.getId();
+        receiverAccountId = receiverAccount.getId();
 
         // 4. ПОЛЬЗОВАТЕЛЬ ПОПОЛНЯЕТ АККАУНТ - senderAccountId
+        double depositAmount = RandomData.getDepositAmount();
         DepositRequest depositRequest = DepositRequest.builder()
                 .id(senderAccountId)
-                .balance(100)
+                .balance(depositAmount)
                 .build();
 
         new DepositRequester(loginUser,
                 ResponseSpecs.requestReturnsOk()).post(depositRequest);
 
         // 5. ПОЛЬЗОВАТЕЛЬ ПЕРЕВОДИТ ДС
+        double transferAmount = RandomData.getTransferAmount(depositAmount);
+
         TransferMoneyRequest transferMoneyRequest = TransferMoneyRequest.builder()
                 .senderAccountId(senderAccountId)
                 .receiverAccountId(receiverAccountId)
-                .amount(55)
+                .amount(transferAmount)
                 .build();
 
         TransferMoneyResponse transferMoneyResponse = new TransferRequester(loginUser,
@@ -73,28 +79,32 @@ public class TransferMoneyTest extends BaseTest {
                 .extract()
                 .as(TransferMoneyResponse.class);
 
-        softly.assertThat(transferMoneyResponse.getAmount()).isEqualTo(55);
+        softly.assertThat(transferMoneyResponse.getAmount()).isEqualTo(transferAmount);
         softly.assertThat(transferMoneyResponse.getMessage()).isEqualTo("Transfer successful");
         softly.assertThat(transferMoneyResponse.getSenderAccountId()).isEqualTo(senderAccountId);
         softly.assertThat(transferMoneyResponse.getReceiverAccountId()).isEqualTo(receiverAccountId);
 
-        // 6. ПОЛЬЗОВАТЕЛЬ ПРОВЕРЯЕТ БАЛАНС ПЕРВОГО И ВТОРОГО АККАУНТА + СМОТРИТ ТРАЗАКЦИЮ
+        // 6. ПОЛЬЗОВАТЕЛЬ ПРОВЕРЯЕТ БАЛАНС ПЕРВОГО И ВТОРОГО АККАУНТА
         GetUserAccountsRequester getUserAccountsRequester = new GetUserAccountsRequester(loginUser,
                 ResponseSpecs.requestReturnsOk());
 
-        double senderBalance = getUserAccountsRequester.get(null)
-                .extract()
-                .jsonPath()
-                .getDouble("find { it.id == " + senderAccountId + " }.balance");
+        List<Accounts> accounts = Arrays.asList(
+                getUserAccountsRequester.get(null)
+                        .extract()
+                        .as(Accounts[].class)
+        );
 
-        double receiverBalance = getUserAccountsRequester.get(null)
-                .extract()
-                .jsonPath()
-                .getDouble("find { it.id == " + receiverAccountId + " }.balance");
+        softly.assertThat(accounts)
+                .filteredOn(account -> account.getId() == senderAccountId)
+                .extracting("balance")
+                .first()
+                .isEqualTo(depositAmount - transferAmount);
 
-
-        softly.assertThat(senderBalance).isEqualTo(45);
-        softly.assertThat(receiverBalance).isEqualTo(55);
+        softly.assertThat(accounts)
+                .filteredOn(account -> account.getId() == receiverAccountId)
+                .extracting("balance")
+                .first()
+                .isEqualTo(transferAmount);
     }
 
     // НАБОР НЕВАЛИДНЫХ ДАННЫХ ДЛЯ ТРАНСФЕРА
@@ -132,15 +142,17 @@ public class TransferMoneyTest extends BaseTest {
         CreateAccountRequester createAccountRequester = new CreateAccountRequester(loginUser,
                 ResponseSpecs.entityWasCreated());
 
-        senderAccountId = createAccountRequester.post(null)
+        UserCreateAccountResponse senderAccount = createAccountRequester.post(null)
                 .extract()
-                .jsonPath()
-                .getInt("id");
+                .as(UserCreateAccountResponse.class);
 
-        receiverAccountId = createAccountRequester.post(null)
+        senderAccountId = senderAccount.getId();
+
+        UserCreateAccountResponse receiverAccount = createAccountRequester.post(null)
                 .extract()
-                .jsonPath()
-                .getInt("id");
+                .as(UserCreateAccountResponse.class);
+
+        receiverAccountId = receiverAccount.getId();
 
         // 4. ПОЛЬЗОВАТЕЛЬ ПОПОЛНЯЕТ АККАУНТ - senderAccountId
         DepositRequest depositRequest = DepositRequest.builder()
