@@ -36,4 +36,14 @@ public class RandomData {
     public static double getTransferAmount(double maxValue) {
         return Math.random() * maxValue + 0.01;
     }
+
+    // Рандомный id и не равный существующему
+    public static int getRandomId(int existingId) {
+        return(int) (Math.random() * 900) + existingId;
+    }
+
+    // Рандомный id
+    public static int getRandomId() {
+        return(int) (Math.random() * 900) + 100;
+    }
 }

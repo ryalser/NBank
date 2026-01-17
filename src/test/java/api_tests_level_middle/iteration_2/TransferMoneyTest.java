@@ -12,7 +12,6 @@ import requests.*;
 import specs.RequestsSpecs;
 import specs.ResponseSpecs;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -94,17 +93,18 @@ public class TransferMoneyTest extends BaseTest {
                         .as(Accounts[].class)
         );
 
-        softly.assertThat(accounts)
-                .filteredOn(account -> account.getId() == senderAccountId)
-                .extracting("balance")
-                .first()
-                .isEqualTo(depositAmount - transferAmount);
+        Accounts senderAccountAfterTransfer = accounts.stream()
+                .filter(account -> account.getId() == senderAccountId)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
 
-        softly.assertThat(accounts)
-                .filteredOn(account -> account.getId() == receiverAccountId)
-                .extracting("balance")
-                .first()
-                .isEqualTo(transferAmount);
+        Accounts receiverAccountAfterTransfer = accounts.stream()
+                .filter(account -> account.getId() == receiverAccountId)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+
+        softly.assertThat(senderAccountAfterTransfer.getBalance()).isEqualTo(depositAmount - transferAmount);
+        softly.assertThat(receiverAccountAfterTransfer.getBalance()).isEqualTo(transferAmount);
     }
 
     // НАБОР НЕВАЛИДНЫХ ДАННЫХ ДЛЯ ТРАНСФЕРА
@@ -155,9 +155,10 @@ public class TransferMoneyTest extends BaseTest {
         receiverAccountId = receiverAccount.getId();
 
         // 4. ПОЛЬЗОВАТЕЛЬ ПОПОЛНЯЕТ АККАУНТ - senderAccountId
+        double depositAmount = RandomData.getDepositAmount();
         DepositRequest depositRequest = DepositRequest.builder()
                 .id(senderAccountId)
-                .balance(5000)
+                .balance(depositAmount)
                 .build();
 
         new DepositRequester(loginUser,
@@ -179,18 +180,24 @@ public class TransferMoneyTest extends BaseTest {
         GetUserAccountsRequester getUserAccountsRequester = new GetUserAccountsRequester(loginUser,
                 ResponseSpecs.requestReturnsOk());
 
-        double actualBalanceReceiver = getUserAccountsRequester.get(null)
-                .extract()
-                .jsonPath()
-                .getDouble(String.format("find { it.id == %d }.balance", receiverAccountId));
+        List<Accounts> accounts = Arrays.asList(
+                getUserAccountsRequester.get(null)
+                        .extract()
+                        .as(Accounts[].class)
+        );
 
-        double actualBalanceSender = getUserAccountsRequester.get(null)
-                .extract()
-                .jsonPath()
-                .getDouble(String.format("find { it.id == %d }.balance", senderAccountId));
+        Accounts senderAccountAfterTransfer = accounts.stream()
+                .filter(account -> account.getId() == senderAccountId)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
 
-        softly.assertThat(actualBalanceSender).isEqualTo(5000.0);
-        softly.assertThat(actualBalanceReceiver).isEqualTo(0.0);
+        Accounts receiverAccountAfterTransfer = accounts.stream()
+                .filter(account -> account.getId() == receiverAccountId)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+
+        softly.assertThat(senderAccountAfterTransfer.getBalance()).isEqualTo(depositAmount);
+        softly.assertThat(receiverAccountAfterTransfer.getBalance()).isEqualTo(0.0);
     }
 
     @Test
@@ -219,13 +226,14 @@ public class TransferMoneyTest extends BaseTest {
 
         senderAccountId = createAccountRequester.post(null)
                 .extract()
-                .jsonPath()
-                .getInt("id");
+                .as(UserCreateAccountResponse.class)
+                .getId();
 
         // 4. ПОЛЬЗОВАТЕЛЬ ПОПОЛНЯЕТ АККАУНТ - senderAccountId
+        double depositAmount = RandomData.getDepositAmount();
         DepositRequest depositRequest = DepositRequest.builder()
                 .id(senderAccountId)
-                .balance(100)
+                .balance(depositAmount)
                 .build();
 
         new DepositRequester(loginUser,
@@ -234,8 +242,8 @@ public class TransferMoneyTest extends BaseTest {
         // 5. ПОЛЬЗОВАТЕЛЬ ПЕРЕВОДИТ ДС
         TransferMoneyRequest transferMoneyRequest = TransferMoneyRequest.builder()
                 .senderAccountId(senderAccountId)
-                .receiverAccountId(12345)
-                .amount(100)
+                .receiverAccountId(RandomData.getRandomId())
+                .amount(RandomData.getTransferAmount(depositAmount))
                 .build();
 
         // Ожидаемый текст в ответе
