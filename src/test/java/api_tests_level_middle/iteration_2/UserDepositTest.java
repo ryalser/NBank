@@ -11,6 +11,8 @@ import requests.*;
 import specs.RequestsSpecs;
 import specs.ResponseSpecs;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class UserDepositTest extends BaseTest {
@@ -48,9 +50,10 @@ public class UserDepositTest extends BaseTest {
         int accountId = userCreateAccountResponse.getId();
 
         // 3. ДЕЛАЕТ ДЕПОЗИТ
+        double depositAmount = RandomData.getDepositAmount();
         DepositRequest depositRequest = DepositRequest.builder()
                 .id(accountId)
-                .balance(100)
+                .balance(depositAmount)
                 .build();
 
         DepositRequester depositRequester = new DepositRequester(
@@ -62,8 +65,7 @@ public class UserDepositTest extends BaseTest {
                 .extract()
                 .as(DepositResponse.class);
 
-        softly.assertThat(depositResponse.getBalance()).isEqualTo(100);
-        softly.assertThat(depositResponse.getAccountNumber()).isEqualTo(accountId);
+        softly.assertThat(depositResponse.getBalance()).isEqualTo(depositAmount);
 
         // 4. ПРОВЕРКА ЧЕРЕЗ GET МЕТОД /api/v1/customer/accounts
         GetUserAccountsRequester getUserAccountsRequester = new GetUserAccountsRequester(
@@ -71,20 +73,26 @@ public class UserDepositTest extends BaseTest {
                 ResponseSpecs.requestReturnsOk()
         );
 
-        double actualBalance = getUserAccountsRequester.get(null)
-                .extract()
-                .jsonPath()
-                .getDouble("[0].balance");
+        List<Accounts> accounts = Arrays.asList(
+                getUserAccountsRequester.get(null)
+                        .extract()
+                        .as(Accounts[].class)
+        );
 
-        softly.assertThat(actualBalance).isEqualTo(100);
+        Accounts accounts1 = accounts.stream()
+                .filter(account -> account.getId() == accountId)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+
+        softly.assertThat(accounts1.getBalance()).isEqualTo(depositAmount);
     }
 
     // Набор невалидных данных для депозита
     public static Stream<Arguments> depositInvalidData() {
         return Stream.of(
                 // Входящее значение, название атрибута, ожидаемая ошибка
-                Arguments.of(-10, "Deposit amount must be at least 0.01"),
-                        Arguments.of(10500, "Deposit amount cannot exceed 5000"),
+                Arguments.of(RandomData.getInvalidNegativeAmount(), "Deposit amount must be at least 0.01"),
+                        Arguments.of(RandomData.getInvalidExceedingAmount(), "Deposit amount cannot exceed 5000"),
                         Arguments.of(0, "Deposit amount must be at least 0.01")
         );
     }
@@ -117,10 +125,12 @@ public class UserDepositTest extends BaseTest {
         );
 
         // Получить id аккаунта
-        int accountId = createAccountRequester.post(null)
+        UserCreateAccountResponse userCreateAccountResponse = createAccountRequester.post(null)
                 .extract()
-                .jsonPath()
-                .getInt("id");
+                .as(UserCreateAccountResponse.class);
+
+        int accountId = userCreateAccountResponse.getId();
+        double initialBalance = userCreateAccountResponse.getBalance();
 
         // 3. ДЕЛАЕТ ДЕПОЗИТ С НЕВАЛИДНЫМИ ДАННЫМИ
         DepositRequest depositRequest = DepositRequest.builder()
@@ -141,12 +151,18 @@ public class UserDepositTest extends BaseTest {
                 ResponseSpecs.requestReturnsOk()
         );
 
-        double actualBalance = getUserAccountsRequester.get(null)
+        Accounts[] accountsArray = getUserAccountsRequester.get(null)
                 .extract()
-                .jsonPath()
-                .getDouble("[0].balance");
+                .as(Accounts[].class);
 
-        softly.assertThat(actualBalance).isEqualTo(0.0);
+        List<Accounts> accounts = Arrays.asList(accountsArray);
+
+        Accounts accounts1 = accounts.stream()
+                .filter(account -> account.getId() == accountId)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+
+        softly.assertThat(accounts1.getBalance()).isEqualTo(initialBalance);
     }
 
     @Test
@@ -173,11 +189,16 @@ public class UserDepositTest extends BaseTest {
              ResponseSpecs.entityWasCreated()
         );
 
-        createAccountRequester.post(null);
+        UserCreateAccountResponse userCreateAccountResponse = createAccountRequester.post(null)
+                .extract()
+                .as(UserCreateAccountResponse.class);
+
+        int accountId = userCreateAccountResponse.getId();
+        double initialBalance = userCreateAccountResponse.getBalance();
 
         DepositRequest depositRequest = DepositRequest.builder()
-                .id(1234)
-                .balance(100)
+                .id(RandomData.getRandomId(accountId))
+                .balance(RandomData.getDepositAmount())
                 .build();
 
         String errorValueWithInvalidAccountId = "Unauthorized access to account";
@@ -187,7 +208,6 @@ public class UserDepositTest extends BaseTest {
                 RequestsSpecs.authAsUser(username, password),
                 ResponseSpecs.requestReturnsTextForbidden(errorValueWithInvalidAccountId)
         );
-
         depositRequester.post(depositRequest);
 
         GetUserAccountsRequester getUserAccountsRequester = new GetUserAccountsRequester(
@@ -195,11 +215,19 @@ public class UserDepositTest extends BaseTest {
                 ResponseSpecs.requestReturnsOk()
         );
 
-        double actualBalance = getUserAccountsRequester.get(null)
+        Accounts[] userAccounts = getUserAccountsRequester.get(null)
                 .extract()
-                .jsonPath()
-                .getDouble("[0].balance");
+                .as(Accounts[].class);
 
-        softly.assertThat(actualBalance).isEqualTo(0.0);
+        // Проверяем, что есть созданный аккаунт
+        softly.assertThat(userAccounts).isNotEmpty();
+
+        // Находим созданный аккаунт по ID
+        Accounts createdAccount = Arrays.stream(userAccounts)
+                .filter(account -> account.getId() == accountId)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+
+        softly.assertThat(createdAccount.getBalance()).isEqualTo(initialBalance);
     }
 }

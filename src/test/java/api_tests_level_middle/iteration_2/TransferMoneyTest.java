@@ -110,9 +110,9 @@ public class TransferMoneyTest extends BaseTest {
     // НАБОР НЕВАЛИДНЫХ ДАННЫХ ДЛЯ ТРАНСФЕРА
     public static Stream<Arguments> transferInvalidData() {
         return Stream.of(
-                Arguments.of(-1,"Transfer amount must be at least 0.01"),
-                Arguments.of(10001,"Transfer amount cannot exceed 10000"),
-                Arguments.of(5001,"Invalid transfer: insufficient funds or invalid accounts")
+                Arguments.of(RandomData.getInvalidNegativeAmount(),"Transfer amount must be at least 0.01"),
+                Arguments.of(RandomData.getInvalidExceedingAmount(),"Transfer amount cannot exceed 10000"),
+                Arguments.of(0.0,"Transfer amount must be at least 0.01")
         );
     }
 

@@ -15,14 +15,6 @@ import java.util.List;
 public class BaseTest {
     protected SoftAssertions softly;
 
-    @BeforeAll
-    public static void setupRestAssured(){
-        RestAssured.filters(
-                List.of(new RequestLoggingFilter(),
-                        new ResponseLoggingFilter()
-                ));
-    }
-
     @BeforeEach
     public void setupTest() {
         this.softly = new SoftAssertions();

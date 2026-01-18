@@ -68,9 +68,9 @@ public class ChangeNameUserTest extends BaseTest {
     // Набор невалидных "name" для негативных тестов
     public static Stream<Arguments> invalidName() {
         return Stream.of(
-                Arguments.of("JohnSmith","Name must contain two words with letters only"),
-                Arguments.of("123 Smith","Name must contain two words with letters only"),
-                Arguments.of(" ","Name must contain two words with letters only")
+                Arguments.of(RandomData.getNameWithoutSpace(),"Name must contain two words with letters only"),
+                Arguments.of(RandomData.getNameWithNumber(),"Name must contain two words with letters only"),
+                Arguments.of(RandomData.getNameWithSpacesOnly(),"Name must contain two words with letters only")
         );
     }
 
