@@ -17,7 +17,7 @@ public class AdminCreateUserRequester extends PostRequest<CreateUserRequest> {
         return given()
                 .spec(requestSpecification)
                 .body(model)
-                .post("/api/v1/admin/users")
+                .post("/admin/users")
                 .then()
                 .assertThat()
                 .spec(responseSpecification);

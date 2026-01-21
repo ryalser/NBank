@@ -1,5 +1,6 @@
 package specs;
 
+import configs.Config;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -13,8 +14,6 @@ import java.util.List;
 public class RequestsSpecs {
     private RequestsSpecs() {}
 
-    private static final String BASE_URL = "http://localhost:4111";
-
     // Базовый билдер для всех спецификаций; будет использован в спеках админа и юзера
     private static RequestSpecBuilder defaultRequestBuilder() {
         return new RequestSpecBuilder()
@@ -24,7 +23,7 @@ public class RequestsSpecs {
                         new RequestLoggingFilter(),
                         new ResponseLoggingFilter()
                 ))
-                .setBaseUri(BASE_URL);
+                .setBaseUri(Config.getProperty("server") + Config.getProperty("apiVersion"));
     }
 
     // Спецификация без аутентификации

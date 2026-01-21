@@ -22,7 +22,7 @@ public class CrudRequester extends HttpRequest implements CrudEndpointInterface 
 
         return given()
                 .spec(requestSpecification)
-                .body(model)
+                .body(body)
                 .post(endpoint.getUrl())
                 .then()
                 .assertThat()
@@ -30,17 +30,17 @@ public class CrudRequester extends HttpRequest implements CrudEndpointInterface 
     }
 
     @Override
-    public Object get(int id) {
+    public Object get(long id) {
         return null;
     }
 
     @Override
-    public Object update(int id, BaseModel model) {
+    public Object update(long id, BaseModel model) {
         return null;
     }
 
     @Override
-    public Object delete(int id) {
+    public Object delete(long id) {
         return null;
     }
 }

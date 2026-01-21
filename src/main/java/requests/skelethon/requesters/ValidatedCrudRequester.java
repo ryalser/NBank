@@ -21,17 +21,17 @@ public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest imp
     }
 
     @Override
-    public Object get(int id) {
+    public Object get(long id) {
         return null;
     }
 
     @Override
-    public Object update(int id, BaseModel model) {
+    public Object update(long id, BaseModel model) {
         return null;
     }
 
     @Override
-    public Object delete(int id) {
+    public Object delete(long id) {
         return null;
     }
 }
