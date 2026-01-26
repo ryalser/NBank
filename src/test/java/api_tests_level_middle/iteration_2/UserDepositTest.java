@@ -43,7 +43,7 @@ public class UserDepositTest extends BaseTest {
                 ResponseSpecs.entityWasCreated()
         );
 
-        UserCreateAccountResponse userCreateAccountResponse = createAccountRequester.post(null)
+        UserCreateAccountResponse userCreateAccountResponse = createAccountRequester.post()
                 .extract()
                 .as(UserCreateAccountResponse.class);
 
@@ -74,7 +74,7 @@ public class UserDepositTest extends BaseTest {
         );
 
         List<Accounts> accounts = Arrays.asList(
-                getUserAccountsRequester.get(null)
+                getUserAccountsRequester.get()
                         .extract()
                         .as(Accounts[].class)
         );
@@ -82,7 +82,7 @@ public class UserDepositTest extends BaseTest {
         Accounts accounts1 = accounts.stream()
                 .filter(account -> account.getId() == accountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(accounts1.getBalance()).isEqualTo(depositAmount);
     }
@@ -91,9 +91,9 @@ public class UserDepositTest extends BaseTest {
     public static Stream<Arguments> depositInvalidData() {
         return Stream.of(
                 // Входящее значение, название атрибута, ожидаемая ошибка
-                Arguments.of(RandomData.getInvalidNegativeAmount(), "Deposit amount must be at least 0.01"),
-                        Arguments.of(RandomData.getInvalidExceedingAmount(), "Deposit amount cannot exceed 5000"),
-                        Arguments.of(0, "Deposit amount must be at least 0.01")
+                Arguments.of(RandomData.getInvalidNegativeAmount(), ResponseSpecs.DEPOSIT_AMOUNT_MIN_0_01),
+                        Arguments.of(RandomData.getInvalidExceedingAmount(), ResponseSpecs.DEPOSIT_AMOUNT_MAX_5000),
+                        Arguments.of(0, ResponseSpecs.DEPOSIT_AMOUNT_MIN_0_01)
         );
     }
 
@@ -125,7 +125,7 @@ public class UserDepositTest extends BaseTest {
         );
 
         // Получить id аккаунта
-        UserCreateAccountResponse userCreateAccountResponse = createAccountRequester.post(null)
+        UserCreateAccountResponse userCreateAccountResponse = createAccountRequester.post()
                 .extract()
                 .as(UserCreateAccountResponse.class);
 
@@ -151,7 +151,7 @@ public class UserDepositTest extends BaseTest {
                 ResponseSpecs.requestReturnsOk()
         );
 
-        Accounts[] accountsArray = getUserAccountsRequester.get(null)
+        Accounts[] accountsArray = getUserAccountsRequester.get()
                 .extract()
                 .as(Accounts[].class);
 
@@ -160,7 +160,7 @@ public class UserDepositTest extends BaseTest {
         Accounts accounts1 = accounts.stream()
                 .filter(account -> account.getId() == accountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(accounts1.getBalance()).isEqualTo(initialBalance);
     }
@@ -189,7 +189,7 @@ public class UserDepositTest extends BaseTest {
              ResponseSpecs.entityWasCreated()
         );
 
-        UserCreateAccountResponse userCreateAccountResponse = createAccountRequester.post(null)
+        UserCreateAccountResponse userCreateAccountResponse = createAccountRequester.post()
                 .extract()
                 .as(UserCreateAccountResponse.class);
 
@@ -200,13 +200,11 @@ public class UserDepositTest extends BaseTest {
                 .id(RandomData.getRandomId(accountId))
                 .balance(RandomData.getDepositAmount())
                 .build();
-
-        String errorValueWithInvalidAccountId = "Unauthorized access to account";
         // кажется, в апи не совсем корректно реализован этот момент
 
         DepositRequester depositRequester = new DepositRequester(
                 RequestsSpecs.authAsUser(username, password),
-                ResponseSpecs.requestReturnsTextForbidden(errorValueWithInvalidAccountId)
+                ResponseSpecs.requestReturnsTextForbidden(ResponseSpecs.UNAUTHORIZED_ACCESS_TO_ACCOUNT)
         );
         depositRequester.post(depositRequest);
 
@@ -215,7 +213,7 @@ public class UserDepositTest extends BaseTest {
                 ResponseSpecs.requestReturnsOk()
         );
 
-        Accounts[] userAccounts = getUserAccountsRequester.get(null)
+        Accounts[] userAccounts = getUserAccountsRequester.get()
                 .extract()
                 .as(Accounts[].class);
 
@@ -226,7 +224,7 @@ public class UserDepositTest extends BaseTest {
         Accounts createdAccount = Arrays.stream(userAccounts)
                 .filter(account -> account.getId() == accountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(createdAccount.getBalance()).isEqualTo(initialBalance);
     }

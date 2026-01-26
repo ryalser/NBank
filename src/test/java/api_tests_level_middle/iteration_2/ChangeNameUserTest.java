@@ -51,12 +51,12 @@ public class ChangeNameUserTest extends BaseTest {
                 .as(PutCustomerProfileResponse.class);
 
         // проверяем ответ при изменении имени
-        softly.assertThat(putCustomerProfileResponse.getMessage()).isEqualTo("Profile updated successfully");
+        softly.assertThat(putCustomerProfileResponse.getMessage()).isEqualTo(ResponseSpecs.PROFILE_UPDATED_SUCCESSFULLY);
         softly.assertThat(putCustomerProfileResponse.getCustomer().getName()).isEqualTo(newName);
 
         // 4. ПОЛЬЗОВАТЕЛЬ ПРОВЕРЯЕТ СВОЙ ПРОФИЛЬ
         GetCustomerProfileResponse getCustomerProfileResponse = new GetCustomerProfileRequester(loginUser,
-                ResponseSpecs.requestReturnsOk()).get(null)
+                ResponseSpecs.requestReturnsOk()).get()
                 .extract()
                 .as(GetCustomerProfileResponse.class);
 
@@ -68,9 +68,9 @@ public class ChangeNameUserTest extends BaseTest {
     // Набор невалидных "name" для негативных тестов
     public static Stream<Arguments> invalidName() {
         return Stream.of(
-                Arguments.of(RandomData.getNameWithoutSpace(),"Name must contain two words with letters only"),
-                Arguments.of(RandomData.getNameWithNumber(),"Name must contain two words with letters only"),
-                Arguments.of(RandomData.getNameWithSpacesOnly(),"Name must contain two words with letters only")
+                Arguments.of(RandomData.getNameWithoutSpace(),ResponseSpecs.VALIDATION_TWO_WORDS_LETTERS_ONLY),
+                Arguments.of(RandomData.getNameWithNumber(),ResponseSpecs.VALIDATION_TWO_WORDS_LETTERS_ONLY),
+                Arguments.of(RandomData.getNameWithSpacesOnly(),ResponseSpecs.VALIDATION_TWO_WORDS_LETTERS_ONLY)
         );
     }
 
@@ -106,7 +106,7 @@ public class ChangeNameUserTest extends BaseTest {
 
         // 4. ПОЛЬЗОВАТЕЛЬ ПРОВЕРЯЕТ СВОЙ ПРОФИЛЬ
         GetCustomerProfileResponse getCustomerProfileResponse = new GetCustomerProfileRequester(loginUser,
-                ResponseSpecs.requestReturnsOk()).get(null)
+                ResponseSpecs.requestReturnsOk()).get()
                 .extract()
                 .as(GetCustomerProfileResponse.class);
 

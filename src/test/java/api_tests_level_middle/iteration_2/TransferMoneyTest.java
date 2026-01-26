@@ -43,11 +43,11 @@ public class TransferMoneyTest extends BaseTest {
         CreateAccountRequester createAccountRequester = new CreateAccountRequester(loginUser,
                 ResponseSpecs.entityWasCreated());
 
-        UserCreateAccountResponse senderAccount = createAccountRequester.post(null)
+        UserCreateAccountResponse senderAccount = createAccountRequester.post()
                 .extract()
                 .as(UserCreateAccountResponse.class);
 
-        UserCreateAccountResponse receiverAccount = createAccountRequester.post(null)
+        UserCreateAccountResponse receiverAccount = createAccountRequester.post()
                 .extract()
                 .as(UserCreateAccountResponse.class);
 
@@ -79,7 +79,7 @@ public class TransferMoneyTest extends BaseTest {
                 .as(TransferMoneyResponse.class);
 
         softly.assertThat(transferMoneyResponse.getAmount()).isEqualTo(transferAmount);
-        softly.assertThat(transferMoneyResponse.getMessage()).isEqualTo("Transfer successful");
+        softly.assertThat(transferMoneyResponse.getMessage()).isEqualTo(ResponseSpecs.TRANSFER_SUCCESSFUL);
         softly.assertThat(transferMoneyResponse.getSenderAccountId()).isEqualTo(senderAccountId);
         softly.assertThat(transferMoneyResponse.getReceiverAccountId()).isEqualTo(receiverAccountId);
 
@@ -88,7 +88,7 @@ public class TransferMoneyTest extends BaseTest {
                 ResponseSpecs.requestReturnsOk());
 
         List<Accounts> accounts = Arrays.asList(
-                getUserAccountsRequester.get(null)
+                getUserAccountsRequester.get()
                         .extract()
                         .as(Accounts[].class)
         );
@@ -96,12 +96,12 @@ public class TransferMoneyTest extends BaseTest {
         Accounts senderAccountAfterTransfer = accounts.stream()
                 .filter(account -> account.getId() == senderAccountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
 
         Accounts receiverAccountAfterTransfer = accounts.stream()
                 .filter(account -> account.getId() == receiverAccountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(senderAccountAfterTransfer.getBalance()).isEqualTo(depositAmount - transferAmount);
         softly.assertThat(receiverAccountAfterTransfer.getBalance()).isEqualTo(transferAmount);
@@ -110,9 +110,9 @@ public class TransferMoneyTest extends BaseTest {
     // НАБОР НЕВАЛИДНЫХ ДАННЫХ ДЛЯ ТРАНСФЕРА
     public static Stream<Arguments> transferInvalidData() {
         return Stream.of(
-                Arguments.of(RandomData.getInvalidNegativeAmount(),"Transfer amount must be at least 0.01"),
-                Arguments.of(RandomData.getInvalidExceedingAmount(),"Transfer amount cannot exceed 10000"),
-                Arguments.of(0.0,"Transfer amount must be at least 0.01")
+                Arguments.of(RandomData.getInvalidNegativeAmount(),ResponseSpecs.AMOUNT_TRANSFER_MIN_0_01),
+                Arguments.of(RandomData.getInvalidExceedingAmount(),ResponseSpecs.AMOUNT_TRANSFER_MAX_10000),
+                Arguments.of(0.0,ResponseSpecs.AMOUNT_TRANSFER_MIN_0_01)
         );
     }
 
@@ -142,13 +142,13 @@ public class TransferMoneyTest extends BaseTest {
         CreateAccountRequester createAccountRequester = new CreateAccountRequester(loginUser,
                 ResponseSpecs.entityWasCreated());
 
-        UserCreateAccountResponse senderAccount = createAccountRequester.post(null)
+        UserCreateAccountResponse senderAccount = createAccountRequester.post()
                 .extract()
                 .as(UserCreateAccountResponse.class);
 
         senderAccountId = senderAccount.getId();
 
-        UserCreateAccountResponse receiverAccount = createAccountRequester.post(null)
+        UserCreateAccountResponse receiverAccount = createAccountRequester.post()
                 .extract()
                 .as(UserCreateAccountResponse.class);
 
@@ -181,7 +181,7 @@ public class TransferMoneyTest extends BaseTest {
                 ResponseSpecs.requestReturnsOk());
 
         List<Accounts> accounts = Arrays.asList(
-                getUserAccountsRequester.get(null)
+                getUserAccountsRequester.get()
                         .extract()
                         .as(Accounts[].class)
         );
@@ -189,15 +189,15 @@ public class TransferMoneyTest extends BaseTest {
         Accounts senderAccountAfterTransfer = accounts.stream()
                 .filter(account -> account.getId() == senderAccountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
 
         Accounts receiverAccountAfterTransfer = accounts.stream()
                 .filter(account -> account.getId() == receiverAccountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("аккаунт не найден"));
+                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(senderAccountAfterTransfer.getBalance()).isEqualTo(depositAmount);
-        softly.assertThat(receiverAccountAfterTransfer.getBalance()).isEqualTo(0.0);
+        softly.assertThat(receiverAccountAfterTransfer.getBalance()).isEqualTo(ResponseSpecs.DEFAULT_ACCOUNT_BALANCE);
     }
 
     @Test
@@ -224,7 +224,7 @@ public class TransferMoneyTest extends BaseTest {
         CreateAccountRequester createAccountRequester = new CreateAccountRequester(loginUser,
                 ResponseSpecs.entityWasCreated());
 
-        senderAccountId = createAccountRequester.post(null)
+        senderAccountId = createAccountRequester.post()
                 .extract()
                 .as(UserCreateAccountResponse.class)
                 .getId();
@@ -246,11 +246,8 @@ public class TransferMoneyTest extends BaseTest {
                 .amount(RandomData.getTransferAmount(depositAmount))
                 .build();
 
-        // Ожидаемый текст в ответе
-        String errorValueWithInvalidAccountIdReceiver = "Invalid transfer: insufficient funds or invalid accounts";
-
         TransferRequester transferRequester = new TransferRequester(loginUser,
-                ResponseSpecs.requestReturnsTextBadRequest(errorValueWithInvalidAccountIdReceiver));
+                ResponseSpecs.requestReturnsTextBadRequest(ResponseSpecs.INVALID_ACCOUNT_OR_INSUFFICIENT_FUNDS));
 
         transferRequester.post(transferMoneyRequest);
     }

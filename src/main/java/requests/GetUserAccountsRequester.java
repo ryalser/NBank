@@ -21,4 +21,8 @@ public class GetUserAccountsRequester extends GetRequest<BaseModel> {
                 .assertThat()
                 .spec(responseSpecification);
     }
+
+    public ValidatableResponse get(){
+        return get(null);
+    }
 }
