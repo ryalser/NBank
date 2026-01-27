@@ -1,5 +1,7 @@
 package api_tests_level_middle.iteration_2;
 
+import constants.Message;
+import constants.TestConstants;
 import generators.RandomData;
 import models.*;
 import org.junit.jupiter.api.DisplayName;
@@ -82,7 +84,7 @@ public class UserDepositTest extends BaseTest {
         Accounts accounts1 = accounts.stream()
                 .filter(account -> account.getId() == accountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(Message.Business.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(accounts1.getBalance()).isEqualTo(depositAmount);
     }
@@ -91,9 +93,9 @@ public class UserDepositTest extends BaseTest {
     public static Stream<Arguments> depositInvalidData() {
         return Stream.of(
                 // Входящее значение, название атрибута, ожидаемая ошибка
-                Arguments.of(RandomData.getInvalidNegativeAmount(), ResponseSpecs.DEPOSIT_AMOUNT_MIN_0_01),
-                        Arguments.of(RandomData.getInvalidExceedingAmount(), ResponseSpecs.DEPOSIT_AMOUNT_MAX_5000),
-                        Arguments.of(0, ResponseSpecs.DEPOSIT_AMOUNT_MIN_0_01)
+                Arguments.of(RandomData.getInvalidNegativeAmount(), Message.Validation.DEPOSIT_AMOUNT_MIN_0_01),
+                        Arguments.of(RandomData.getInvalidExceedingAmount(), Message.Validation.DEPOSIT_AMOUNT_MAX_5000),
+                        Arguments.of(TestConstants.ZERO_AMOUNT, Message.Validation.DEPOSIT_AMOUNT_MIN_0_01)
         );
     }
 
@@ -160,7 +162,7 @@ public class UserDepositTest extends BaseTest {
         Accounts accounts1 = accounts.stream()
                 .filter(account -> account.getId() == accountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(Message.Business.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(accounts1.getBalance()).isEqualTo(initialBalance);
     }
@@ -204,7 +206,7 @@ public class UserDepositTest extends BaseTest {
 
         DepositRequester depositRequester = new DepositRequester(
                 RequestsSpecs.authAsUser(username, password),
-                ResponseSpecs.requestReturnsTextForbidden(ResponseSpecs.UNAUTHORIZED_ACCESS_TO_ACCOUNT)
+                ResponseSpecs.requestReturnsTextForbidden(Message.Security.UNAUTHORIZED_ACCESS_TO_ACCOUNT)
         );
         depositRequester.post(depositRequest);
 
@@ -224,7 +226,7 @@ public class UserDepositTest extends BaseTest {
         Accounts createdAccount = Arrays.stream(userAccounts)
                 .filter(account -> account.getId() == accountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(Message.Business.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(createdAccount.getBalance()).isEqualTo(initialBalance);
     }

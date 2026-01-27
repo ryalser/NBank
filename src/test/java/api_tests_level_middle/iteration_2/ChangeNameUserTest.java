@@ -1,8 +1,8 @@
 package api_tests_level_middle.iteration_2;
 
+import constants.Message;
 import generators.RandomData;
 import io.restassured.specification.RequestSpecification;
-import io.restassured.specification.ResponseSpecification;
 import models.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ public class ChangeNameUserTest extends BaseTest {
                 .as(PutCustomerProfileResponse.class);
 
         // проверяем ответ при изменении имени
-        softly.assertThat(putCustomerProfileResponse.getMessage()).isEqualTo(ResponseSpecs.PROFILE_UPDATED_SUCCESSFULLY);
+        softly.assertThat(putCustomerProfileResponse.getMessage()).isEqualTo(Message.Success.PROFILE_UPDATED_SUCCESSFULLY);
         softly.assertThat(putCustomerProfileResponse.getCustomer().getName()).isEqualTo(newName);
 
         // 4. ПОЛЬЗОВАТЕЛЬ ПРОВЕРЯЕТ СВОЙ ПРОФИЛЬ
@@ -68,16 +68,16 @@ public class ChangeNameUserTest extends BaseTest {
     // Набор невалидных "name" для негативных тестов
     public static Stream<Arguments> invalidName() {
         return Stream.of(
-                Arguments.of(RandomData.getNameWithoutSpace(),ResponseSpecs.VALIDATION_TWO_WORDS_LETTERS_ONLY),
-                Arguments.of(RandomData.getNameWithNumber(),ResponseSpecs.VALIDATION_TWO_WORDS_LETTERS_ONLY),
-                Arguments.of(RandomData.getNameWithSpacesOnly(),ResponseSpecs.VALIDATION_TWO_WORDS_LETTERS_ONLY)
+                Arguments.of(RandomData.getNameWithoutSpace(),Message.Validation.VALIDATION_TWO_WORDS_LETTERS_ONLY),
+                Arguments.of(RandomData.getNameWithNumber(),Message.Validation.VALIDATION_TWO_WORDS_LETTERS_ONLY),
+                Arguments.of(RandomData.getNameWithSpacesOnly(),Message.Validation.VALIDATION_TWO_WORDS_LETTERS_ONLY)
         );
     }
 
     @MethodSource("invalidName")
     @ParameterizedTest
     @DisplayName("Негативный тест: невалидные name")
-    public void changeNameWithInvalidName(String name, String errorValue) {
+    public void changeWithInvalidName(String name, String errorValue) {
         String username = RandomData.getUsername();
         String password = RandomData.getPassword();
 

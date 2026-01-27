@@ -1,5 +1,7 @@
 package api_tests_level_middle.iteration_2;
 
+import constants.Message;
+import constants.TestConstants;
 import generators.RandomData;
 import io.restassured.specification.RequestSpecification;
 import models.*;
@@ -79,7 +81,7 @@ public class TransferMoneyTest extends BaseTest {
                 .as(TransferMoneyResponse.class);
 
         softly.assertThat(transferMoneyResponse.getAmount()).isEqualTo(transferAmount);
-        softly.assertThat(transferMoneyResponse.getMessage()).isEqualTo(ResponseSpecs.TRANSFER_SUCCESSFUL);
+        softly.assertThat(transferMoneyResponse.getMessage()).isEqualTo(Message.Success.TRANSFER_SUCCESSFUL);
         softly.assertThat(transferMoneyResponse.getSenderAccountId()).isEqualTo(senderAccountId);
         softly.assertThat(transferMoneyResponse.getReceiverAccountId()).isEqualTo(receiverAccountId);
 
@@ -96,12 +98,12 @@ public class TransferMoneyTest extends BaseTest {
         Accounts senderAccountAfterTransfer = accounts.stream()
                 .filter(account -> account.getId() == senderAccountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(Message.Business.ACCOUNT_NOT_FOUND));
 
         Accounts receiverAccountAfterTransfer = accounts.stream()
                 .filter(account -> account.getId() == receiverAccountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(Message.Business.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(senderAccountAfterTransfer.getBalance()).isEqualTo(depositAmount - transferAmount);
         softly.assertThat(receiverAccountAfterTransfer.getBalance()).isEqualTo(transferAmount);
@@ -110,9 +112,9 @@ public class TransferMoneyTest extends BaseTest {
     // НАБОР НЕВАЛИДНЫХ ДАННЫХ ДЛЯ ТРАНСФЕРА
     public static Stream<Arguments> transferInvalidData() {
         return Stream.of(
-                Arguments.of(RandomData.getInvalidNegativeAmount(),ResponseSpecs.AMOUNT_TRANSFER_MIN_0_01),
-                Arguments.of(RandomData.getInvalidExceedingAmount(),ResponseSpecs.AMOUNT_TRANSFER_MAX_10000),
-                Arguments.of(0.0,ResponseSpecs.AMOUNT_TRANSFER_MIN_0_01)
+                Arguments.of(RandomData.getInvalidNegativeAmount(),Message.Validation.AMOUNT_TRANSFER_MIN_0_01),
+                Arguments.of(RandomData.getInvalidExceedingAmount(),Message.Validation.AMOUNT_TRANSFER_MAX_10000),
+                Arguments.of(TestConstants.ZERO_AMOUNT,Message.Validation.AMOUNT_TRANSFER_MIN_0_01)
         );
     }
 
@@ -189,15 +191,15 @@ public class TransferMoneyTest extends BaseTest {
         Accounts senderAccountAfterTransfer = accounts.stream()
                 .filter(account -> account.getId() == senderAccountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(Message.Business.ACCOUNT_NOT_FOUND));
 
         Accounts receiverAccountAfterTransfer = accounts.stream()
                 .filter(account -> account.getId() == receiverAccountId)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(ResponseSpecs.ACCOUNT_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(Message.Business.ACCOUNT_NOT_FOUND));
 
         softly.assertThat(senderAccountAfterTransfer.getBalance()).isEqualTo(depositAmount);
-        softly.assertThat(receiverAccountAfterTransfer.getBalance()).isEqualTo(ResponseSpecs.DEFAULT_ACCOUNT_BALANCE);
+        softly.assertThat(receiverAccountAfterTransfer.getBalance()).isEqualTo(TestConstants.DEFAULT_ACCOUNT_BALANCE);
     }
 
     @Test
@@ -247,7 +249,7 @@ public class TransferMoneyTest extends BaseTest {
                 .build();
 
         TransferRequester transferRequester = new TransferRequester(loginUser,
-                ResponseSpecs.requestReturnsTextBadRequest(ResponseSpecs.INVALID_ACCOUNT_OR_INSUFFICIENT_FUNDS));
+                ResponseSpecs.requestReturnsTextBadRequest(Message.Validation.INVALID_ACCOUNT_OR_INSUFFICIENT_FUNDS));
 
         transferRequester.post(transferMoneyRequest);
     }
