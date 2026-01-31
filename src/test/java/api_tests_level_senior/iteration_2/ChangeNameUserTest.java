@@ -60,7 +60,7 @@ public class ChangeNameUserTest extends BaseTest {
 
     @MethodSource("userInvalidData")
     @ParameterizedTest
-    @DisplayName("Невалидные входящие параметры")
+    @DisplayName("Негатив: валидация параметров при изменении имени")
     public void changeWithInvalidName(String name, String errorValue){
         //Делаем шаг - создание юзера
         var user = AdminSteps.createUserAsUser();

@@ -10,6 +10,7 @@ import specs.RequestsSpecs;
 import specs.ResponseSpecs;
 
 public class DepositSteps {
+    // Пополнение аккаунта с указанием суммы
     public static DepositResponse depositToAccount(String username, String password, int accountId, double amount) {
         DepositRequest depositRequest = DepositRequest.builder()
                 .id(accountId)
@@ -23,6 +24,7 @@ public class DepositSteps {
         ).post(depositRequest);
     }
 
+    // Пополнение аккаунта с рандомной(валидной) суммой
     public static DepositResponse depositToAccount(String username, String password, int accountId) {
         DepositRequest depositRequest = RandomModelGenerator.generate(DepositRequest.class); // рандомная сумма
         depositRequest.setId(accountId);
@@ -34,6 +36,7 @@ public class DepositSteps {
         ).post(depositRequest);
     }
 
+    // Пополнение аккаунта с рандомной(НЕвалидной) суммой
     public static void depositWithInvalidAmount(String username, String password, int accountId, double invalidAmount,
                                                 String expectedError) {
         DepositRequest depositRequest = DepositRequest.builder()
@@ -48,6 +51,7 @@ public class DepositSteps {
         ).post(depositRequest);
     }
 
+    // Пополнение аккаунта с невалидным аккаунтом(Id)
     public static void depositToInvalidAccount(String username, String password, int invalidAccountId, double amount,
                                                String expectedError) {
         DepositRequest depositRequest = DepositRequest.builder()

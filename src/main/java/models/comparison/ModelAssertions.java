@@ -4,7 +4,6 @@ import org.assertj.core.api.AbstractAssert;
 
 import java.util.Map;
 
-
 public class ModelAssertions extends AbstractAssert<ModelAssertions, Object> {
 
     private final Object expected;

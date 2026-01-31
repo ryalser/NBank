@@ -13,8 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AdminSteps {
+    // Хранение НЕ хешированных паролей после создания юзеров
     private static final Map<String, String> arrayPasswords = new HashMap<>();
 
+    // Создать пользователя, роль - ADMIN
     public static CreateUserResponse createUserAsAdmin(){
         CreateUserRequest userRequest = RandomModelGenerator.generate(CreateUserRequest.class);
         userRequest.setRole(UserRole.ADMIN.toString());
@@ -30,6 +32,7 @@ public class AdminSteps {
         ).post(userRequest);
     }
 
+    // Создать пользователя, роль - USER
     public static CreateUserResponse createUserAsUser(){
         CreateUserRequest userRequest = RandomModelGenerator.generate(CreateUserRequest.class);
         userRequest.setRole(UserRole.USER.toString());
@@ -49,7 +52,7 @@ public class AdminSteps {
         return RandomModelGenerator.generate(CreateUserRequest.class);
     }
 
-    // Получение оригинального пароля
+    // Получение оригинального пароля, чтобы вернуть не хэшированный
     public static String getOriginalPassword(String username) {
         return arrayPasswords.get(username);
     }

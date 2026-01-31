@@ -89,8 +89,6 @@ public class RandomModelGenerator {
     }
 
     private static Object generateFromRegex(String regex, Class<?> type) {
-        System.out.println("DEBUG generateFromRegex: regex='" + regex + "', type=" + type.getSimpleName());
-
         try {
             // 1. Username: ^[A-Za-z0-9]{3,15}$
             if (regex.equals("^[A-Za-z0-9]{3,15}$") && type.equals(String.class)) {
