@@ -12,7 +12,9 @@ import static io.restassured.RestAssured.given;
 
 public class CrudRequester extends HttpRequest implements CrudEndpointInterface {
 
-    public CrudRequester(RequestSpecification requestSpecification, Endpoint endpoint, ResponseSpecification responseSpecification) {
+    public CrudRequester(RequestSpecification requestSpecification,
+                         Endpoint endpoint,
+                         ResponseSpecification responseSpecification) {
         super(requestSpecification, endpoint, responseSpecification);
     }
 
@@ -30,17 +32,59 @@ public class CrudRequester extends HttpRequest implements CrudEndpointInterface 
     }
 
     @Override
-    public Object get(long id) {
-        return null;
+    public ValidatableResponse get(long id) {
+        String url = endpoint.getUrl();
+        if(id > 0){
+            url = url + "/" + id;
+        }
+
+        return given()
+                .spec(requestSpecification)
+                .get(url)
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
+    }
+
+    public ValidatableResponse get() {
+
+        return given()
+                .spec(requestSpecification)
+                .get(endpoint.getUrl())
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
     }
 
     @Override
-    public Object update(long id, BaseModel model) {
-        return null;
+    public ValidatableResponse update(long id, BaseModel model) {
+        var body = model == null ? "" : model;
+        // Для PUT запросов (update)
+        return given()
+                .spec(requestSpecification)
+                .body(body)
+                .put(endpoint.getUrl()) // Используем PUT метод
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
+    }
+
+    public ValidatableResponse update(BaseModel model){
+        return update(0,model);
     }
 
     @Override
-    public Object delete(long id) {
-        return null;
+    public ValidatableResponse delete(long id) {
+         String url = endpoint.getUrl();
+         if(id > 0){
+             url = url + "/" + id;
+         }
+
+        return given()
+                .spec(requestSpecification)
+                .delete(url)
+                .then()
+                .assertThat()
+                .spec(responseSpecification);
     }
 }

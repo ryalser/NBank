@@ -23,6 +23,12 @@ public class ResponseSpecs {
                 .build();
     }
 
+    public static ResponseSpecification requestReturnsBadRequest() {
+        return defaultResponseBuilder()
+                .expectStatusCode(HttpStatus.SC_BAD_REQUEST)
+                .build();
+    }
+
     public static ResponseSpecification requestReturnsBadRequest(String errorKey, String errorValue) {
         return defaultResponseBuilder()
                 .expectStatusCode(HttpStatus.SC_BAD_REQUEST)
@@ -30,17 +36,31 @@ public class ResponseSpecs {
                 .build();
     }
 
-    public static ResponseSpecification requestReturnsTextBadRequest(String errorValue) {
+    public static ResponseSpecification requestReturnsForbidden() {
         return defaultResponseBuilder()
-                .expectStatusCode(HttpStatus.SC_BAD_REQUEST)
-                .expectBody(Matchers.equalTo(errorValue))
+                .expectStatusCode(HttpStatus.SC_FORBIDDEN)
                 .build();
     }
 
-    public static ResponseSpecification requestReturnsTextForbidden(String errorValue) {
+    public static ResponseSpecification requestReturnsTextBadRequest(String expectedText) {
+        return defaultResponseBuilder()
+                .expectStatusCode(HttpStatus.SC_BAD_REQUEST)
+                .expectBody(Matchers.equalTo(expectedText))
+                .build();
+    }
+
+    public static ResponseSpecification requestReturnsTextForbidden(String expectedText) {
         return defaultResponseBuilder()
                 .expectStatusCode(HttpStatus.SC_FORBIDDEN)
-                .expectBody(Matchers.equalTo(errorValue))
+                .expectBody(Matchers.equalTo(expectedText))
+                .build();
+    }
+
+    // Универсальный метод для создания кастомной спецификации
+    public static ResponseSpecification customSpec(int statusCode, String jsonPath, Object expectedValue) {
+        return defaultResponseBuilder()
+                .expectStatusCode(statusCode)
+                .expectBody(jsonPath, Matchers.equalTo(expectedValue))
                 .build();
     }
 }

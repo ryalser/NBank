@@ -10,7 +10,9 @@ import requests.skelethon.interfaces.CrudEndpointInterface;
 public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest implements CrudEndpointInterface {
     private CrudRequester crudRequester;
 
-    public ValidatedCrudRequester(RequestSpecification requestSpecification, Endpoint endpoint, ResponseSpecification responseSpecification) {
+    public ValidatedCrudRequester(RequestSpecification requestSpecification,
+                                  Endpoint endpoint,
+                                  ResponseSpecification responseSpecification) {
         super(requestSpecification, endpoint, responseSpecification);
         this.crudRequester = new CrudRequester(requestSpecification, endpoint, responseSpecification);
     }
@@ -20,18 +22,29 @@ public class ValidatedCrudRequester<T extends BaseModel> extends HttpRequest imp
         return (T) crudRequester.post(model).extract().as(endpoint.getResponseModel());
     }
 
-    @Override
-    public Object get(long id) {
-        return null;
+    public T post( ) {
+        return (T) crudRequester.post(null).extract().as(endpoint.getResponseModel());
     }
 
     @Override
-    public Object update(long id, BaseModel model) {
-        return null;
+    public T get(long id) {
+        return (T) crudRequester.get(id).extract().as(endpoint.getResponseModel());    }
+
+    public T get() {
+        return get(0);
     }
 
     @Override
-    public Object delete(long id) {
-        return null;
+    public T update(long id, BaseModel model) {
+        return (T) crudRequester.update(id, model).extract().as(endpoint.getResponseModel());
+    }
+
+    public T update(BaseModel model){
+        return update(0,model);
+    }
+
+    @Override
+    public T delete(long id) {
+        return (T) crudRequester.delete(id).extract().as(endpoint.getResponseModel());
     }
 }

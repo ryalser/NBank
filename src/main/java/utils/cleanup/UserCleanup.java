@@ -24,4 +24,8 @@ public class UserCleanup {
                     .delete("http://localhost:4111/api/v1/admin/users/" + id);
         }
     }
+
+    public static void cleanUsersData(){
+
+    }
 }
