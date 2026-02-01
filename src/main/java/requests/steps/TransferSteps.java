@@ -70,7 +70,7 @@ public class TransferSteps {
 
         new CrudRequester(RequestsSpecs.authAsUser(username, password),
                 Endpoint.TRANSFER,
-                ResponseSpecs.requestReturnsTextForbidden(expectedError)
+                ResponseSpecs.requestReturnsBadRequest(expectedError)
         ).post(transferMoneyRequest);
     }
 }

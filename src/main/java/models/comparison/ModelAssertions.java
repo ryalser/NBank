@@ -2,6 +2,7 @@ package models.comparison;
 
 import org.assertj.core.api.AbstractAssert;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ModelAssertions extends AbstractAssert<ModelAssertions, Object> {
@@ -34,6 +35,21 @@ public class ModelAssertions extends AbstractAssert<ModelAssertions, Object> {
 
         if (!result.isSuccess()) {
             failWithMessage("Models do not match with given field mappings:\n%s", result);
+        }
+
+        return this;
+    }
+
+    public ModelAssertions matchPartially(String... fieldsToCheck) {
+        Map<String, String> fieldMappings = new HashMap<>();
+        for (String field : fieldsToCheck) {
+            fieldMappings.put(field, field);
+        }
+
+        ModelComparator.ComparisonResult result = ModelComparator.compare(expected, actual, fieldMappings);
+
+        if (!result.isSuccess()) {
+            failWithMessage("Models do not match on specified fields:\n%s", result);
         }
 
         return this;

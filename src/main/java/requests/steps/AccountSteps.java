@@ -9,6 +9,7 @@ import requests.skelethon.requesters.ValidatedCrudRequester;
 import specs.RequestsSpecs;
 import specs.ResponseSpecs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,6 +23,21 @@ public class AccountSteps {
                 Endpoint.CREATE_ACCOUNT,
                 ResponseSpecs.entityWasCreated()
         ).post();
+    }
+
+    // Создание двух аккаунтов пользователем
+    public static List<UserCreateAccountResponse> createTwoAccounts(String username, String password){
+        List<UserCreateAccountResponse> createdAccounts = new ArrayList<>();
+
+        // Создаем первый аккаунт
+        UserCreateAccountResponse firstAccount = createAccount(username, password);
+        createdAccounts.add(firstAccount);
+
+        // Создаем второй аккаунт
+        UserCreateAccountResponse secondAccount = createAccount(username, password);
+        createdAccounts.add(secondAccount);
+
+        return createdAccounts;
     }
 
     // Получение аккаунтов пользователя
