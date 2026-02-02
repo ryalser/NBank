@@ -40,14 +40,16 @@ public class ProfileSteps {
 
    // Получение профиля пользователя
     public static GetCustomerProfileResponse getProfile (String username, String password){
-        return new ValidatedCrudRequester<GetCustomerProfileResponse>(
+        ValidatableResponse response = new CrudRequester(
                 RequestsSpecs.authAsUser(username, password),
                 Endpoint.GET_CUSTOMER_PROFILE,
                 ResponseSpecs.requestReturnsOk()
         ).get();
+
+        return response.extract().as(GetCustomerProfileResponse.class);
     }
 
-    // Проверка имени в профиле c тем, что пришел во входящих параметрах
+    // Проверка имени в профиле c тем,что пришел во входящих параметрах
     public static boolean isNameProfile(String username, String password, String expectedName){
        GetCustomerProfileResponse profile = getProfile(username, password);
 

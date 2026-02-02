@@ -13,6 +13,11 @@ public enum Endpoint {
             CreateUserRequest.class,
             CreateUserResponse.class
     ),
+    GET_ADMIN_USER(
+            "/admin/users",
+            null,
+            GetAllUsers.class
+    ),
     //Accounts
     ACCOUNTS(
             "/accounts",

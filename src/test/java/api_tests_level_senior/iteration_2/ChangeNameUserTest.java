@@ -1,8 +1,10 @@
 package api_tests_level_senior.iteration_2;
 
 import constants.Message;
+import constants.TestDataConstants;
 import generators.RandomData;
 import models.*;
+import models.comparison.ModelAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,27 +28,26 @@ public class ChangeNameUserTest extends BaseTest {
 
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
-        String defaultName = user.getName();
-        //Формируем рандомное имя
         String newName = RandomData.getName();
 
+        PutCustomerProfileRequest profileRequest = PutCustomerProfileRequest.builder()
+                .name(newName)
+                .build();
 
         PutCustomerProfileResponse updateResponse = ProfileSteps.updateProfile(username, password, newName);
 
         softly.assertThat(updateResponse.getMessage())
                 .isEqualTo(Message.Success.PROFILE_UPDATED_SUCCESSFULLY);
-        softly.assertThat(updateResponse.getCustomer().getName())
-                .isEqualTo(newName);
-        softly.assertThat(updateResponse.getCustomer().getName())
-                .isNotEqualTo(defaultName);
+
+        ModelAssertions.assertThatModels(
+                profileRequest, updateResponse.getCustomer()).match();
 
         GetCustomerProfileResponse userProfile = ProfileSteps.getProfile(username,password);
 
         softly.assertThat(userProfile.getName()).isEqualTo(newName);
-        softly.assertThat(userProfile.getName()).isNotEqualTo(defaultName);
+        softly.assertThat(userProfile.getName()).isNotEqualTo(TestDataConstants.DEFAULT_NAME);
     }
 
-    //Создаем набор невалидных данных для негативных тестов
     public static Stream<Arguments> userInvalidData(){
         return Stream.of(
                 Arguments.of(RandomData.getNameWithoutSpace(),Message.Validation.VALIDATION_TWO_WORDS_LETTERS_ONLY),
@@ -73,9 +74,9 @@ public class ChangeNameUserTest extends BaseTest {
                 ResponseSpecs.requestReturnsTextBadRequest(errorValue)
                 ).update(updateNameRequest);
 
-        softly.assertThat(defaultName).isNull();// при создании пользователя имя NULL
+        softly.assertThat(defaultName).isNull();
         softly.assertThat(ProfileSteps.getProfile(
                 username,AdminSteps.getOriginalPassword(username))
-                .getName()).isNull(); // имя профиля - NULL
+                .getName()).isNull();
     }
 }

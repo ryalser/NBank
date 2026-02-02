@@ -15,5 +15,4 @@ public class PutCustomerProfileResponse extends BaseModel {
     // Модель ответа PUT /api/v1/customer/profile
     private String message;
     private Customers customer;
-
 }

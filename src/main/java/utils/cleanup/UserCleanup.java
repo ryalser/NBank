@@ -1,31 +1,29 @@
 package utils.cleanup;
 
-import java.util.List;
+import requests.skelethon.Endpoint;
+import requests.skelethon.requesters.CrudRequester;
+import requests.steps.AdminSteps;
+import specs.RequestsSpecs;
+import specs.ResponseSpecs;
 
-import static io.restassured.RestAssured.given;
+import java.util.List;
 
 public class UserCleanup {
     public static void cleanUsers() {
-        // Собирается список id пользователей
-        List<Integer> userId = given()
-                .header("Authorization","Basic YWRtaW46YWRtaW4=")
-                .get("http://localhost:4111/api/v1/admin/users")
-                .then()
-                .extract()
-                .jsonPath()
-                .getList("id");
+        List<Integer> userIds = AdminSteps.getIdAllUsers();
 
-        for(Integer id : userId){
-            if(id == null){
-                System.out.println("Список юзеров пуст.");
-            }
-            given()
-                    .header("Authorization","Basic YWRtaW46YWRtaW4=")
-                    .delete("http://localhost:4111/api/v1/admin/users/" + id);
+        if (userIds.isEmpty()) {
+            System.out.println("Нет пользователей для удаления.");
+            return;
         }
-    }
 
-    public static void cleanUsersData(){
-
+        CrudRequester deleter = new CrudRequester(
+                RequestsSpecs.adminSpec(),
+                Endpoint.ADMIN_USER,
+                ResponseSpecs.requestReturnsOk()
+        );
+        for (Integer id : userIds) {
+                deleter.delete(id);
+        }
     }
 }

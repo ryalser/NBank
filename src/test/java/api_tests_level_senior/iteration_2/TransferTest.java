@@ -70,7 +70,6 @@ public class TransferTest extends BaseTest {
                 username,password, senderAccountId, RandomData.getDepositAmount());
         double depositAmount = depositResponse.getBalance();
 
-
         TransferSteps.transferWithInvalidAmount(
                 username,
                 password,

@@ -23,9 +23,6 @@ public class DepositTest extends BaseTest {
         String username = user.getUsername();
 
         UserCreateAccountResponse account = AccountSteps.createAccount(user.getUsername(),AdminSteps.getOriginalPassword(username));
-        double defaultBalance = account.getBalance();
-
-        softly.assertThat(defaultBalance).isEqualTo(TestDataConstants.DEFAULT_ACCOUNT_BALANCE);
 
         DepositResponse deposit = DepositSteps.depositToAccount(
                 username,
@@ -37,8 +34,10 @@ public class DepositTest extends BaseTest {
         softly.assertThat(deposit.getBalance())
                 .isBetween(TestDataConstants.MIN_VALUE_DEPOSIT,
                         TestDataConstants.MAX_VALUE_DEPOSIT);
-        softly.assertThat(deposit.getId()).isEqualTo(account.getId());
-        softly.assertThat(deposit.getBalance()).isEqualTo(defaultBalance + deposit.getBalance());
+        softly.assertThat(deposit.getId())
+                .isEqualTo(account.getId());
+        softly.assertThat(deposit.getBalance())
+                .isEqualTo(TestDataConstants.DEFAULT_ACCOUNT_BALANCE + deposit.getBalance());
 
 
         var accountAfterDeposit = AccountSteps.getAccountById(

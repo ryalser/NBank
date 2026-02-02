@@ -3,14 +3,15 @@ package requests.steps;
 import generators.RandomModelGenerator;
 import models.CreateUserRequest;
 import models.CreateUserResponse;
+import models.GetAllUsers;
 import models.UserRole;
 import requests.skelethon.Endpoint;
+import requests.skelethon.requesters.CrudRequester;
 import requests.skelethon.requesters.ValidatedCrudRequester;
 import specs.RequestsSpecs;
 import specs.ResponseSpecs;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class AdminSteps {
     // Хранение НЕ хешированных паролей после создания юзеров
@@ -50,6 +51,28 @@ public class AdminSteps {
 
     public static CreateUserRequest generateUserRequest(){
         return RandomModelGenerator.generate(CreateUserRequest.class);
+    }
+
+    // Получить ID всех пользователей
+    public static List<Integer> getIdAllUsers(){
+        try {
+            GetAllUsers[] usersArray = new CrudRequester(
+                    RequestsSpecs.adminSpec(),
+                    Endpoint.ADMIN_USER,
+                    ResponseSpecs.requestReturnsOk()
+            ).get()
+                    .extract()
+                    .as(GetAllUsers[].class);
+
+            return usersArray == null ? new ArrayList<>() :
+                    Arrays.stream(usersArray)
+                            .map(GetAllUsers::getId)
+                            .toList();
+
+        } catch (Exception e) {
+            System.err.println("Ошибка: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     // Получение оригинального пароля, чтобы вернуть не хэшированный

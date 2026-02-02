@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class AccountSteps {
     // Создание аккаунта
     public static UserCreateAccountResponse createAccount(String username, String password){
