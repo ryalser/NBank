@@ -33,4 +33,3 @@ public class Message {
         public static final String ACCOUNT_NOT_FOUND = "Аккаунт не найден";
     }
 }
-

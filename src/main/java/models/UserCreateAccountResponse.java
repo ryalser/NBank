@@ -16,5 +16,5 @@ public class UserCreateAccountResponse extends BaseModel {
     private int id;
     private String accountNumber;
     private double balance;
-    private List<String> transactions;
+    private List<Transaction> transactions;
 }

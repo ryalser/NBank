@@ -1,19 +1,25 @@
 package specs;
 
+import configs.Config;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import models.LoginUserRequest;
-import requests.LoginUserRequester;
+import requests.skelethon.Endpoint;
+import requests.skelethon.requesters.CrudRequester;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RequestsSpecs {
+    // Кэш авторизационных заголовков для пользователей
+    private static Map<String,String> authHeaders = new HashMap<>(Map.of(
+            "admin", "Basic YWRtaW46YWRtaW4="
+    ));
     private RequestsSpecs() {}
-
-    private static final String BASE_URL = "http://localhost:4111";
 
     // Базовый билдер для всех спецификаций; будет использован в спеках админа и юзера
     private static RequestSpecBuilder defaultRequestBuilder() {
@@ -24,7 +30,7 @@ public class RequestsSpecs {
                         new RequestLoggingFilter(),
                         new ResponseLoggingFilter()
                 ))
-                .setBaseUri(BASE_URL);
+                .setBaseUri(Config.getProperty("server") + Config.getProperty("apiVersion"));
     }
 
     // Спецификация без аутентификации
@@ -35,21 +41,46 @@ public class RequestsSpecs {
     // Спецификация для админа
     public static RequestSpecification adminSpec() {
         return defaultRequestBuilder()
-                .addHeader("Authorization", "Basic YWRtaW46YWRtaW4=")
+                .addHeader("Authorization", authHeaders.get("admin"))
                 .build();
     }
 
     // Спецификация для аутентифицированного пользователя
     public static RequestSpecification authAsUser(String username, String password) {
-        String userAuthHeader = new LoginUserRequester(
-                RequestsSpecs.unAuthSpec(),
-                ResponseSpecs.requestReturnsOk())
-                .post(LoginUserRequest.builder().username(username).password(password).build())
-                .extract()
-                .header("Authorization");
+        if (!authHeaders.containsKey(username)){
+            String userAuthHeader = getAuthHeaderFromLogin(username, password);
+            authHeaders.put(username, userAuthHeader);
+        }
 
         return defaultRequestBuilder()
-                .addHeader("Authorization", userAuthHeader)
+                .addHeader("Authorization", authHeaders.get(username))
+                .build();
+    }
+
+    private static String getAuthHeaderFromLogin(String username, String password){
+        LoginUserRequest loginRequest = LoginUserRequest.builder()
+                .username(username)
+                .password(password)
+                .build();
+
+        return new CrudRequester(unAuthSpec(),
+                Endpoint.LOGIN,
+                ResponseSpecs.requestReturnsOk())
+                .post(loginRequest)
+                .extract()
+                .header("Authorization");
+    }
+
+    // Очистка кэша токенов
+    public static void clearAuthCache(){
+        authHeaders.clear();
+        authHeaders.put("admin","Basic YWRtaW46YWRtaW4=");
+    }
+
+    // Метод для получения спецификации с произвольным заголовком
+    public static RequestSpecification withHeader(String headerName, String headerValue){
+        return defaultRequestBuilder()
+                .addHeader(headerName,headerValue)
                 .build();
     }
 }

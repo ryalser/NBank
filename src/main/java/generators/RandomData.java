@@ -4,9 +4,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Random;
 
+import static generators.RandomModelGenerator.random;
+
 public class RandomData {
     private RandomData(){} // не создавать экземпляров
-    public static Random random = new Random();
 
     // Генерация username определенной длины
     public static String getUsername() {
@@ -17,8 +18,8 @@ public class RandomData {
     public static String getPassword() {
         return RandomStringUtils.randomAlphabetic(3).toUpperCase() +
                 RandomStringUtils.randomAlphabetic(5).toLowerCase() +
-                RandomStringUtils.randomNumeric(4) +
-        "$";
+                RandomStringUtils.randomNumeric(3) +
+                "$";
     }
 
     // Имя пользователя

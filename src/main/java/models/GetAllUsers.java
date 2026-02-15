@@ -5,12 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginUserResponse extends BaseModel {
-    // Модель запроса /api/v1/auth/login
+public class GetAllUsers extends BaseModel {
+    private int id;
     private String username;
+    private String password;
+    private String name;
     private String role;
+    private List<Accounts> accounts;
 }
