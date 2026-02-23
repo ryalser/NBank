@@ -1,4 +1,4 @@
-package api_tests_level_senior.iteration_2;
+package api.api_tests_level_senior.iteration_2;
 
 import constants.Message;
 import constants.TestDataConstants;
