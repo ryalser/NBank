@@ -1,4 +1,4 @@
-package api.api_tests_level_senior.iteration_2;
+package api.tests_level_senior.iteration_2;
 
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;

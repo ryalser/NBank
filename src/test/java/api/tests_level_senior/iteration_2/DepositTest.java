@@ -1,7 +1,7 @@
-package api.api_tests_level_senior.iteration_2;
+package api.tests_level_senior.iteration_2;
 
-import constants.Message;
-import constants.TestDataConstants;
+import constants.api.Message;
+import constants.api.TestDataConstants;
 import generators.RandomData;
 import models.*;
 import org.junit.jupiter.api.DisplayName;

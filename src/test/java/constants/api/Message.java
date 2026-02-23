@@ -1,4 +1,4 @@
-package constants;
+package constants.api;
 
 public class Message {
     private Message() {}

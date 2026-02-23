@@ -1,15 +1,13 @@
-package ui.ui_tests_level_junior.iteration_1;
+package ui.tests_level_junior.iteration_2;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selectors;
-import com.codeborne.selenide.Selenide;
-import models.CreateUserRequest;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import requests.steps.AdminSteps;
+import utils.cleanup.UserCleanup;
 
-import static com.codeborne.selenide.Selenide.$;
-
-public class LoginUserTest {
+public class BaseTest {
     @BeforeAll
     public static void setupSelenoid(){
        /*
@@ -35,20 +33,12 @@ public class LoginUserTest {
         Configuration.browserSize = "1920x1080";
         Configuration.headless = false; // false - показывать браузер
         Configuration.baseUrl = "http://localhost:3000";
+        Configuration.timeout = 6000;
     }
 
-    @Test
-    public void adminCanLoginWithCorrectDataTest(){
-        CreateUserRequest admin = CreateUserRequest.builder()
-                .username("admin")
-                .password("admin")
-                .build();
-
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder","Username"))
-                .sendKeys(admin.getUsername());
-        $(Selectors.byAttribute("placeholder","Password"))
-                .sendKeys(admin.getPassword());
-        $("button").click();
+    @AfterAll
+    public static void cleanTestData() {
+        //UserCleanup.cleanUsers();
+        AdminSteps.clearPasswordsCache();
     }
 }
