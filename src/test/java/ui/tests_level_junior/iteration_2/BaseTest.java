@@ -9,7 +9,7 @@ import utils.cleanup.UserCleanup;
 
 public class BaseTest {
     @BeforeAll
-    public static void setupSelenoid(){
+    public static void setupSelenoid() {
        /*
         Configuration.remote = "http://localhost:4444/wd/hub";
         Configuration.baseUrl = "http://192.168.1.110:3000";
@@ -38,7 +38,7 @@ public class BaseTest {
 
     @AfterAll
     public static void cleanTestData() {
-        //UserCleanup.cleanUsers();
+        UserCleanup.cleanUsers();
         AdminSteps.clearPasswordsCache();
     }
 }
