@@ -71,7 +71,7 @@ public class ChangeNameUserTest extends BaseTest {
 
     @Test
     @DisplayName("НЕГАТИВНЫЙ КЕЙС: некорректное имя пользователя при редактировании профиля")
-    public void changeNameWithInvalidData(){
+    public void changeNameWithInvalidDataTest(){
         // Предусловия (подготовка через API):
         CreateUserResponse user = AdminSteps.createUserAsUser();
         String username = user.getUsername();
@@ -104,6 +104,49 @@ public class ChangeNameUserTest extends BaseTest {
         // Проверка алерта
         Alert alert = switchTo().alert();
         assertEquals(UiMessages.Error.INVALID_NAME, alert.getText());
+        alert.accept();
+
+        Selenide.open("/dashboard");
+
+        // Ожидаемый результат / проверки UI + API:
+        $(".user-name").shouldHave(Condition.text(UiTestDataConstants.DEFAULT_NAME_CAPITALIZED));
+        $(".welcome-text").shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Welcome, " + UiTestDataConstants.DEFAULT_NAME_LOWERCASE + "!"));
+
+        GetCustomerProfileResponse profile = ProfileSteps.getProfile(username, password);
+        assertNull(profile.getName());
+    }
+
+    @Test
+    @DisplayName("НЕГАТИВНЫЙ КЕЙС: пустое имя пользователя")
+    public void changeNameWithEmptyValueTest(){
+        // Предусловия (подготовка через API):
+        CreateUserResponse user = AdminSteps.createUserAsUser();
+        String username = user.getUsername();
+        String password = AdminSteps.getOriginalPassword(username);
+
+        //Шаги теста(UI):
+        Selenide.open("/login");
+        $(Selectors.byAttribute("placeholder", "Username"))
+                .shouldBe(Condition.visible).sendKeys(username);
+        $(Selectors.byAttribute("placeholder", "Password"))
+                .shouldBe(Condition.visible).sendKeys(password);
+        $("button").click();
+
+        $(Selectors.byText("User Dashboard")).shouldBe(Condition.visible);
+        $(".welcome-text").shouldBe(Condition.visible)
+                .shouldHave(Condition.text(UiMessages.Welcome.DEFAULT_GREETING));
+        $(Selectors.byClassName("user-username")).click();
+
+        $(".container.mt-5.text-center h1").shouldBe(Condition.visible)
+                .shouldHave(Condition.exactText("✏️ Edit Profile"));
+
+        $(Selectors.byText("💾 Save Changes"))
+                .shouldBe(Condition.visible).click();
+
+        // Проверка алерта
+        Alert alert = switchTo().alert();
+        assertEquals(UiMessages.Error.EMPTY_NAME, alert.getText());
         alert.accept();
 
         Selenide.open("/dashboard");

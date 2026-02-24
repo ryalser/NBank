@@ -25,6 +25,7 @@ public class UiMessages {
         }
 
         public static final String INVALID_NAME = "Name must contain two words with letters only";
+        public static final String EMPTY_NAME = "❌ Please enter a valid name.";
         public static final String INVALID_AMOUNT_MIN = "Transfer amount must be at least 0.01";
         public static final String INVALID_AMOUNT_MAX = "Transfer amount cannot exceed 10000";
         public static final String INSUFFICIENT_FUNDS = "Invalid transfer: insufficient funds or invalid accounts";
