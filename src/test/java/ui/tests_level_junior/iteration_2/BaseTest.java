@@ -38,7 +38,7 @@ public class BaseTest {
 
     @AfterAll
     public static void cleanTestData() {
-        UserCleanup.cleanUsers();
+        // UserCleanup.cleanUsers();
         AdminSteps.clearPasswordsCache();
     }
 }
