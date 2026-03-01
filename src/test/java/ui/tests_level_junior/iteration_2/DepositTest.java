@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import requests.steps.AccountSteps;
 import requests.steps.AdminSteps;
+import ui.steps.UserLoginSteps;
 
 import java.util.Locale;
 
@@ -25,7 +26,7 @@ public class DepositTest extends BaseTest {
     @Test
     @DisplayName("ПОЗИТИВНЫЙ КЕЙС: успешное пополнение")
     public void depisitWithCorrectData() {
-        // Предусловия (подготовка через API):
+        // Предусловия (API):
         CreateUserResponse user = AdminSteps.createUserAsUser();
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
@@ -36,12 +37,7 @@ public class DepositTest extends BaseTest {
         String accountNumber = account.getAccountNumber();
 
         //Шаги теста(UI):
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder", "Username"))
-                .shouldBe(Condition.visible).setValue(username);
-        $(Selectors.byAttribute("placeholder", "Password"))
-                .shouldBe(Condition.visible).setValue(password);
-        $("button").click();
+        UserLoginSteps.loginViaApi(username, password);
 
         $(Selectors.byText("User Dashboard")).shouldBe(Condition.visible);
 
@@ -83,8 +79,8 @@ public class DepositTest extends BaseTest {
 
     @Test
     @DisplayName("НЕГАТИВНЫЙ КЕЙС: пополнение аккаунта с невалидными данными")
-    public void depositWithInvalidData(){
-        // Предусловия (подготовка через API):
+    public void depositWithInvalidData() {
+        // Предусловия (API):
         CreateUserResponse user = AdminSteps.createUserAsUser();
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
@@ -94,12 +90,7 @@ public class DepositTest extends BaseTest {
         String accountNumber = account.getAccountNumber();
 
         //Шаги теста(UI):
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder", "Username"))
-                .setValue(username);
-        $(Selectors.byAttribute("placeholder", "Password"))
-                .setValue(password);
-        $("button").click();
+        UserLoginSteps.loginViaApi(username, password);
 
         $(Selectors.byText("User Dashboard")).shouldBe(Condition.visible);
 

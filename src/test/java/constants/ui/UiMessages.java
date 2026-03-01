@@ -35,5 +35,9 @@ public class UiMessages {
         public static final String DEPOSIT_EXCEED_LIMIT = "❌ Please deposit less or equal to 5000$.";
         public static final String DEPOSIT_INVALID_AMOUNT = "❌ Please enter a valid amount.";
         public static final String DEPOSIT_NO_ACCOUNT_SELECTED = "❌ Please select an account.";
+
+        // Transfer
+        public static final String ERROR_TRANSFER_AMOUNT_EXCEEDS_LIMIT = "❌ Error: Transfer amount cannot exceed 10000";
+        public static final String CONFIRMATION_REQUIRED_ERROR = "❌ Please fill all fields and confirm.";
     }
 }

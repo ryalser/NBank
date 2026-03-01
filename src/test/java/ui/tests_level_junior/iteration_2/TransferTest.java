@@ -14,6 +14,7 @@ import org.openqa.selenium.Alert;
 import requests.steps.AccountSteps;
 import requests.steps.AdminSteps;
 import requests.steps.DepositSteps;
+import ui.steps.UserLoginSteps;
 
 import java.util.List;
 import java.util.Locale;
@@ -44,12 +45,7 @@ public class TransferTest extends BaseTest {
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
         // Шаги теста(UI):
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder", "Username"))
-                .shouldBe(Condition.visible).setValue(username);
-        $(Selectors.byAttribute("placeholder", "Password"))
-                .shouldBe(Condition.visible).setValue(password);
-        $("button").click();
+        UserLoginSteps.loginViaApi(username, password);
 
         $(Selectors.byText("\uD83D\uDD04 Make a Transfer"))
                 .shouldBe(Condition.visible)
@@ -126,12 +122,7 @@ public class TransferTest extends BaseTest {
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
         // Шаги теста(UI):
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder", "Username"))
-                .shouldBe(Condition.visible).setValue(username);
-        $(Selectors.byAttribute("placeholder", "Password"))
-                .shouldBe(Condition.visible).setValue(password);
-        $("button").click();
+        UserLoginSteps.loginViaApi(username, password);
 
         $(Selectors.byText("\uD83D\uDD04 Make a Transfer"))
                 .shouldBe(Condition.visible)
@@ -161,7 +152,7 @@ public class TransferTest extends BaseTest {
         // Ожидаемый результат / Асссерты:
         Alert alert = switchTo().alert();
         String actualMessage = alert.getText();
-        assertTrue(actualMessage.contains("❌ Error: Transfer amount cannot exceed 10000"));
+        assertTrue(actualMessage.contains(UiMessages.Error.ERROR_TRANSFER_AMOUNT_EXCEEDS_LIMIT));
         alert.accept();
 
         Selenide.refresh();
@@ -205,12 +196,7 @@ public class TransferTest extends BaseTest {
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
         // Шаги теста(UI):
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder", "Username"))
-                .shouldBe(Condition.visible).setValue(username);
-        $(Selectors.byAttribute("placeholder", "Password"))
-                .shouldBe(Condition.visible).setValue(password);
-        $("button").click();
+        UserLoginSteps.loginViaApi(username, password);
 
         $(Selectors.byText("\uD83D\uDD04 Make a Transfer"))
                 .shouldBe(Condition.visible)
@@ -240,7 +226,7 @@ public class TransferTest extends BaseTest {
         // Ожидаемый результат / Асссерты:
         Alert alert = switchTo().alert();
         String actualMessage = alert.getText();
-        assertTrue(actualMessage.contains("❌ Please fill all fields and confirm."));
+        assertTrue(actualMessage.contains(UiMessages.Error.CONFIRMATION_REQUIRED_ERROR));
         alert.accept();
 
         Selenide.refresh();

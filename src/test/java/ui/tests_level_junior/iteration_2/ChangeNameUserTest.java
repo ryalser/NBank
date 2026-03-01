@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import requests.steps.AdminSteps;
 import requests.steps.ProfileSteps;
+import ui.steps.UserLoginSteps;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.switchTo;
@@ -23,19 +24,14 @@ public class ChangeNameUserTest extends BaseTest {
     @Test
     @DisplayName("ПОЗИТИВНЫЙ КЕЙС: успешное изменение имени пользователя")
     public void changeNameTest() {
-        // Предусловия (подготовка через API):
+        // Предусловия (API):
         CreateUserResponse user = AdminSteps.createUserAsUser();
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
         String newName = RandomData.getName();
 
         // Шаги теста(UI):
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder", "Username"))
-                .shouldBe(Condition.visible).sendKeys(username);
-        $(Selectors.byAttribute("placeholder", "Password"))
-                .shouldBe(Condition.visible).sendKeys(password);
-        $("button").click();
+        UserLoginSteps.loginViaApi(username, password);
 
         $(Selectors.byText("User Dashboard")).shouldBe(Condition.visible);
 
@@ -71,20 +67,15 @@ public class ChangeNameUserTest extends BaseTest {
 
     @Test
     @DisplayName("НЕГАТИВНЫЙ КЕЙС: некорректное имя пользователя при редактировании профиля")
-    public void changeNameWithInvalidDataTest(){
-        // Предусловия (подготовка через API):
+    public void changeNameWithInvalidDataTest() {
+        // Предусловия (API):
         CreateUserResponse user = AdminSteps.createUserAsUser();
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
         String newName = RandomData.getNameWithoutSpace();
 
         //Шаги теста(UI):
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder", "Username"))
-                .shouldBe(Condition.visible).sendKeys(username);
-        $(Selectors.byAttribute("placeholder", "Password"))
-                .shouldBe(Condition.visible).sendKeys(password);
-        $("button").click();
+        UserLoginSteps.loginViaApi(username, password);
 
         $(Selectors.byText("User Dashboard")).shouldBe(Condition.visible);
         $(".welcome-text").shouldBe(Condition.visible)
@@ -119,8 +110,8 @@ public class ChangeNameUserTest extends BaseTest {
 
     @Test
     @DisplayName("НЕГАТИВНЫЙ КЕЙС: пустое имя пользователя")
-    public void changeNameWithEmptyValueTest(){
-        // Предусловия (подготовка через API):
+    public void changeNameWithEmptyValueTest() {
+        // Предусловия (API):
         CreateUserResponse user = AdminSteps.createUserAsUser();
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
