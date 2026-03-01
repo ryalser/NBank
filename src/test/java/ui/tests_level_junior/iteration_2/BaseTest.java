@@ -1,13 +1,18 @@
 package ui.tests_level_junior.iteration_2;
 
 import com.codeborne.selenide.Configuration;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import requests.steps.AdminSteps;
+import specs.RequestsSpecs;
 import utils.cleanup.UserCleanup;
 
 public class BaseTest {
+    protected SoftAssertions softly;
+
     @BeforeAll
     public static void setupSelenoid() {
        /*
@@ -34,6 +39,17 @@ public class BaseTest {
         Configuration.headless = false; // false - показывать браузер
         Configuration.baseUrl = "http://localhost:3000";
         Configuration.timeout = 6000;
+    }
+
+    @BeforeEach
+    public void setupTest(){
+        this.softly = new SoftAssertions();
+    }
+
+    @AfterEach
+    public void afterTest(){
+        softly.assertAll();
+        RequestsSpecs.clearAuthCache();
     }
 
     @AfterAll
