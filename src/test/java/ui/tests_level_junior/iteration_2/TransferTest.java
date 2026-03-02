@@ -4,24 +4,21 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.Selenide;
 import constants.api.TestDataConstants;
-import constants.ui.UiMessages;
 import generators.RandomData;
 import models.CreateUserResponse;
 import models.UserCreateAccountResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Alert;
 import requests.steps.AccountSteps;
 import requests.steps.AdminSteps;
 import requests.steps.DepositSteps;
+import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
 import java.util.List;
 import java.util.Locale;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.switchTo;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransferTest extends BaseTest {
     @Test
@@ -74,11 +71,7 @@ public class TransferTest extends BaseTest {
 
 
         // Ожидаемый результат / Асссерты:
-        Alert alert = switchTo().alert();
-        String actualMessage = alert.getText();
-        assertTrue(actualMessage.startsWith("✅ Successfully transferred $"));
-        assertTrue(actualMessage.contains("to account " + receiverAccountNumber));
-        alert.accept();
+        AlertSteps.TransferAlert.verifyTransferSuccess(transferAmount,receiverAccountNumber);
 
         Selenide.refresh();
         String balanceAccSender = String.format(Locale.US, "ACC%d (Balance: $%.2f)",
@@ -150,10 +143,7 @@ public class TransferTest extends BaseTest {
                 .click();
 
         // Ожидаемый результат / Асссерты:
-        Alert alert = switchTo().alert();
-        String actualMessage = alert.getText();
-        assertTrue(actualMessage.contains(UiMessages.Error.ERROR_TRANSFER_AMOUNT_EXCEEDS_LIMIT));
-        alert.accept();
+        AlertSteps.TransferAlert.verifyExceedLimitError();
 
         Selenide.refresh();
         String balanceAccSender = String.format(Locale.US, "ACC%d (Balance: $%.2f)",
@@ -224,10 +214,7 @@ public class TransferTest extends BaseTest {
                 .click();
 
         // Ожидаемый результат / Асссерты:
-        Alert alert = switchTo().alert();
-        String actualMessage = alert.getText();
-        assertTrue(actualMessage.contains(UiMessages.Error.CONFIRMATION_REQUIRED_ERROR));
-        alert.accept();
+        AlertSteps.TransferAlert.verifyConfirmationRequiredError();
 
         Selenide.refresh();
         String balanceAccSender = String.format(Locale.US, "ACC%d (Balance: $%.2f)",

@@ -10,13 +10,12 @@ import models.CreateUserResponse;
 import models.GetCustomerProfileResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Alert;
 import requests.steps.AdminSteps;
 import requests.steps.ProfileSteps;
+import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.switchTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -50,9 +49,7 @@ public class ChangeNameUserTest extends BaseTest {
         $(Selectors.byText("💾 Save Changes"))
                 .shouldBe(Condition.visible).click();
 
-        Alert alert = switchTo().alert();
-        assertEquals(UiMessages.Success.NAME_UPDATED, alert.getText());
-        alert.accept(); // закрываем алерт
+        AlertSteps.ProfileAlert.verifyNameUpdated();
 
         Selenide.open("/dashboard");
 
@@ -92,10 +89,7 @@ public class ChangeNameUserTest extends BaseTest {
         $(Selectors.byText("💾 Save Changes"))
                 .shouldBe(Condition.visible).click();
 
-        // Проверка алерта
-        Alert alert = switchTo().alert();
-        assertEquals(UiMessages.Error.INVALID_NAME, alert.getText());
-        alert.accept();
+        AlertSteps.ProfileAlert.verifyIncorrrectNameError();
 
         Selenide.open("/dashboard");
 
@@ -135,10 +129,7 @@ public class ChangeNameUserTest extends BaseTest {
         $(Selectors.byText("💾 Save Changes"))
                 .shouldBe(Condition.visible).click();
 
-        // Проверка алерта
-        Alert alert = switchTo().alert();
-        assertEquals(UiMessages.Error.EMPTY_NAME, alert.getText());
-        alert.accept();
+        AlertSteps.ProfileAlert.verifyEmptyNameError();
 
         Selenide.open("/dashboard");
 

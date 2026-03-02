@@ -21,7 +21,7 @@ public class BaseTest {
     @BeforeAll
     public static void setupSelenoid() {
         Configuration.remote = "http://localhost:4444/wd/hub";
-        Configuration.baseUrl = "http://192.168.1.110:3000";
+        Configuration.baseUrl = "http://192.168.1.103:3000";
         Configuration.browser = "chrome";
         Configuration.browserVersion = "91.0";
         Configuration.browserSize = "1920x1080";

@@ -4,23 +4,21 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.Selenide;
 import constants.api.TestDataConstants;
-import constants.ui.UiMessages;
 import generators.RandomData;
 import models.CreateUserResponse;
 import models.UserCreateAccountResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Alert;
 import requests.steps.AccountSteps;
 import requests.steps.AdminSteps;
+import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
 import java.util.Locale;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.switchTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class DepositTest extends BaseTest {
     @Test
@@ -58,12 +56,7 @@ public class DepositTest extends BaseTest {
                 .click();
 
         //Ожидаемый результат / Асссерты:
-        Alert alert = switchTo().alert();
-        String actualMessage = alert.getText();
-        assertTrue(actualMessage.startsWith("✅ Successfully deposited $"));
-        assertTrue(actualMessage.contains("to account ACC" + accountId));
-        assertTrue(actualMessage.contains(String.format(Locale.US, "%.2f", amount)));
-        alert.accept();
+        AlertSteps.DepositAlert.verifyDepositSuccess(amount,accountId);
 
         Selenide.open("/deposit");
 
@@ -111,10 +104,7 @@ public class DepositTest extends BaseTest {
         $(Selectors.byText("💵 Deposit")).click();
 
         //Ожидаемый результат / Асссерты:
-        Alert alert = switchTo().alert();
-        String actualMessage = alert.getText();
-        assertTrue(actualMessage.contains(UiMessages.Error.DEPOSIT_EXCEED_LIMIT));
-        alert.accept();
+        AlertSteps.DepositAlert.verifyExceedLimitAlert();
 
         Selenide.open("/deposit");
 
