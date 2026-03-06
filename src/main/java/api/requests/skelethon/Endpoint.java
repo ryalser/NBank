@@ -3,7 +3,7 @@ package api.requests.skelethon;
 import api.models.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import models.*;
+import api.models.*;
 
 @Getter
 @AllArgsConstructor
