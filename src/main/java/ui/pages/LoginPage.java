@@ -19,7 +19,7 @@ public class LoginPage extends BasePage<LoginPage> {
     // Залогиниться на странице /login
     public LoginPage login(String username, String password) {
         usernameInput.setValue(username);
-        passwordInput.setValue(username);
+        passwordInput.setValue(password);
         loginButton.click();
         return this;
     }
