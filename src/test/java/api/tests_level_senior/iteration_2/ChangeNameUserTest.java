@@ -1,21 +1,24 @@
 package api.tests_level_senior.iteration_2;
 
+import api.models.CreateUserResponse;
+import api.models.GetCustomerProfileResponse;
+import api.models.PutCustomerProfileRequest;
+import api.models.PutCustomerProfileResponse;
 import constants.api.Message;
 import constants.api.TestDataConstants;
-import generators.RandomData;
-import models.*;
-import models.comparison.ModelAssertions;
+import api.generators.RandomData;
+import api.models.comparison.ModelAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import requests.skelethon.Endpoint;
-import requests.skelethon.requesters.CrudRequester;
-import requests.steps.AdminSteps;
-import requests.steps.ProfileSteps;
-import specs.RequestsSpecs;
-import specs.ResponseSpecs;
+import api.requests.skelethon.Endpoint;
+import api.requests.skelethon.requesters.CrudRequester;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.ProfileSteps;
+import api.specs.RequestsSpecs;
+import api.specs.ResponseSpecs;
 
 import java.util.stream.Stream;
 

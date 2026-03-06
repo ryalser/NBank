@@ -1,18 +1,21 @@
 package api.tests_level_senior.iteration_2;
 
+import api.models.CreateUserResponse;
+import api.models.DepositResponse;
+import api.models.TransferMoneyResponse;
+import api.models.UserCreateAccountResponse;
 import constants.api.Message;
 import constants.api.TestDataConstants;
-import generators.RandomData;
-import models.*;
+import api.generators.RandomData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import requests.steps.AccountSteps;
-import requests.steps.AdminSteps;
-import requests.steps.DepositSteps;
-import requests.steps.TransferSteps;
+import api.requests.steps.AccountSteps;
+import api.requests.steps.AdminSteps;
+import api.requests.steps.DepositSteps;
+import api.requests.steps.TransferSteps;
 
 import java.util.List;
 import java.util.stream.Stream;

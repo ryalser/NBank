@@ -1,11 +1,11 @@
 package ui.steps;
 
 import com.codeborne.selenide.Selenide;
-import models.LoginUserRequest;
-import requests.skelethon.Endpoint;
-import requests.skelethon.requesters.CrudRequester;
-import specs.RequestsSpecs;
-import specs.ResponseSpecs;
+import api.models.LoginUserRequest;
+import api.requests.skelethon.Endpoint;
+import api.requests.skelethon.requesters.CrudRequester;
+import api.specs.RequestsSpecs;
+import api.specs.ResponseSpecs;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 
