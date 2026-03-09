@@ -1,5 +1,6 @@
 package ui.tests_level_junior.iteration_2;
 
+import api.configs.Config;
 import com.codeborne.selenide.Configuration;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
@@ -20,11 +21,11 @@ public class BaseUiTest {
 
     @BeforeAll
     public static void setupSelenoid() {
-        Configuration.remote = "http://localhost:4444/wd/hub";
-        Configuration.baseUrl = "http://192.168.1.103:3000";
-        Configuration.browser = "chrome";
-        Configuration.browserVersion = "91.0";
-        Configuration.browserSize = "1920x1080";
+        Configuration.remote = Config.getProperty("uiRemote");
+        Configuration.baseUrl = Config.getProperty("uiBaseUrl");
+        Configuration.browser = Config.getProperty("browser");
+        Configuration.browserVersion = Config.getProperty("browserVersion");
+        Configuration.browserSize = Config.getProperty("browserSize");;
         Configuration.timeout = 10000;
 
         // Создаем ChromeOptions и настраиваем selenoid options
