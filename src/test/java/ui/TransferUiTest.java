@@ -1,7 +1,5 @@
 package ui;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.Selenide;
 import constants.api.TestDataConstants;
 import api.generators.RandomData;
@@ -12,14 +10,11 @@ import org.junit.jupiter.api.Test;
 import api.requests.steps.AccountSteps;
 import api.requests.steps.AdminSteps;
 import api.requests.steps.DepositSteps;
+import ui.pages.Alerts;
 import ui.pages.TransferPage;
-import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
 import java.util.List;
-import java.util.Locale;
-
-import static com.codeborne.selenide.Selenide.$;
 
 public class TransferUiTest extends BaseUiTest {
     @Test
@@ -54,7 +49,9 @@ public class TransferUiTest extends BaseUiTest {
                 .getSendTransferButton().click();
 
         // Ожидаемый результат / Асссерты:
-        AlertSteps.TransferAlert.verifyTransferSuccess(transferAmount,receiverAccountNumber);
+        AlertHandler.verifyAlertContains(Alerts.TRANSFER_SUCCESS,
+                String.valueOf(transferAmount),
+                String.valueOf(receiverAccountNumber));
 
         Selenide.refresh();
         new TransferPage()
@@ -102,7 +99,7 @@ public class TransferUiTest extends BaseUiTest {
 
 
         // Ожидаемый результат / Асссерты:
-        AlertSteps.TransferAlert.verifyExceedLimitError();
+        AlertHandler.verifyAlert(Alerts.TRANSFER_EXCEED_LIMIT);
 
         Selenide.refresh();
         new TransferPage()
@@ -148,7 +145,7 @@ public class TransferUiTest extends BaseUiTest {
                 .getSendTransferButton().click();
 
         // Ожидаемый результат / Асссерты:
-        AlertSteps.TransferAlert.verifyConfirmationRequiredError();
+        AlertHandler.verifyAlert(Alerts.CONFIRMATION_REQUIRED);
 
         Selenide.refresh();
         new TransferPage()

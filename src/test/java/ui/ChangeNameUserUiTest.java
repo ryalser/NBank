@@ -8,9 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import api.requests.steps.AdminSteps;
 import api.requests.steps.ProfileSteps;
+import ui.pages.Alerts;
 import ui.pages.EditProfilePage;
 import ui.pages.UserDashboardPage;
-import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +37,7 @@ public class ChangeNameUserUiTest extends BaseUiTest {
         new EditProfilePage().open().checkTitlePage()
                 .changeName(newName).getSaveChangesButton().click();
 
-        AlertSteps.ProfileAlert.verifyNameUpdated();
+        AlertHandler.verifyAlert(Alerts.NAME_UPDATED);
 
         // Ожидаемый результат / проверки UI + API:
         new UserDashboardPage().open()
@@ -68,7 +68,7 @@ public class ChangeNameUserUiTest extends BaseUiTest {
         new EditProfilePage().open().checkTitlePage()
                 .changeName(invalidNewName).getSaveChangesButton().click();
 
-        AlertSteps.ProfileAlert.verifyIncorrrectNameError();
+        AlertHandler.verifyAlert(Alerts.INVALID_NAME_ERROR);
 
         // Ожидаемый результат / проверки UI + API:
         new UserDashboardPage().open().checkTitlePage()
@@ -96,8 +96,7 @@ public class ChangeNameUserUiTest extends BaseUiTest {
 
         new EditProfilePage().open().checkTitlePage().getSaveChangesButton().click();
 
-        AlertSteps.ProfileAlert.verifyEmptyNameError();
-
+        AlertHandler.verifyAlert(Alerts.EMPTY_NAME_ERROR);
 
         // Ожидаемый результат / проверки UI + API:
         new UserDashboardPage().open().checkTitlePage()

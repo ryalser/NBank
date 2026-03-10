@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import api.requests.steps.AccountSteps;
 import api.requests.steps.AdminSteps;
+import ui.pages.Alerts;
 import ui.pages.DepositPage;
-import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,8 +35,9 @@ public class DepositUiTest extends BaseUiTest {
                 .enterAmountDeposit(amount)
                 .getDepositButton().click();
 
-
-        AlertSteps.DepositAlert.verifyDepositSuccess(amount,accountId);
+        AlertHandler.verifyAlertContains(Alerts.DEPOSIT_SUCCESS,
+                String.valueOf(amount),
+                String.valueOf(accountId));
 
         //Ожидаемый результат / Асссерты:
         new DepositPage().open().getBalanceAcciuntById(accountId,amount);
@@ -65,7 +66,7 @@ public class DepositUiTest extends BaseUiTest {
                 .getDepositButton().click();
 
         //Ожидаемый результат / Асссерты:
-        AlertSteps.DepositAlert.verifyExceedLimitAlert();
+        AlertHandler.verifyAlert(Alerts.DEPOSIT_EXCEED_LIMIT);
 
         new DepositPage().open().getBalanceAcciuntById(accountId,TestDataConstants.DEFAULT_ACCOUNT_BALANCE);
 
