@@ -12,7 +12,6 @@ import api.requests.steps.AdminSteps;
 import api.requests.steps.DepositSteps;
 import ui.pages.Alerts;
 import ui.pages.TransferPage;
-import ui.steps.UserLoginSteps;
 
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class TransferUiTest extends BaseUiTest {
 
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
-        UserLoginSteps.loginViaApi(username, password);
+        UserLogin.loginViaApi(username, password);
 
         // Шаги теста(UI):
         new TransferPage().open().checkTitlePage()
@@ -86,7 +85,7 @@ public class TransferUiTest extends BaseUiTest {
 
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
-        UserLoginSteps.loginViaApi(username, password);
+        UserLogin.loginViaApi(username, password);
 
         // Шаги теста(UI):
         new TransferPage().open().checkTitlePage()
@@ -133,7 +132,7 @@ public class TransferUiTest extends BaseUiTest {
 
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
-        UserLoginSteps.loginViaApi(username, password);
+        UserLogin.loginViaApi(username, password);
 
         // Шаги теста(UI):
         new TransferPage().open().checkTitlePage()

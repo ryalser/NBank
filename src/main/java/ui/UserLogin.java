@@ -1,4 +1,4 @@
-package ui.steps;
+package ui;
 
 import com.codeborne.selenide.Selenide;
 import api.models.LoginUserRequest;
@@ -9,7 +9,7 @@ import api.specs.ResponseSpecs;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 
-public class UserLoginSteps {
+public class UserLogin {
     // Логин пользователя
     public static void loginViaApi(String username, String password) {
         String authHeader = new CrudRequester(

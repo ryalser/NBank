@@ -5,7 +5,6 @@ import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
 import lombok.Getter;
 
-import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.$;
 
 @Getter

@@ -11,7 +11,6 @@ import api.requests.steps.ProfileSteps;
 import ui.pages.Alerts;
 import ui.pages.EditProfilePage;
 import ui.pages.UserDashboardPage;
-import ui.steps.UserLoginSteps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -26,7 +25,7 @@ public class ChangeNameUserUiTest extends BaseUiTest {
         String password = AdminSteps.getOriginalPassword(username);
         String newName = RandomData.getName();
 
-        UserLoginSteps.loginViaApi(username, password);
+        UserLogin.loginViaApi(username, password);
 
         // Шаги теста(UI):
         new UserDashboardPage().open().checkTitlePage()
@@ -57,7 +56,7 @@ public class ChangeNameUserUiTest extends BaseUiTest {
         String password = AdminSteps.getOriginalPassword(username);
         String invalidNewName = RandomData.getNameWithoutSpace();
 
-        UserLoginSteps.loginViaApi(username, password);
+        UserLogin.loginViaApi(username, password);
 
         //Шаги теста(UI):
         new UserDashboardPage().open().checkTitlePage()
@@ -87,7 +86,7 @@ public class ChangeNameUserUiTest extends BaseUiTest {
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
 
-        UserLoginSteps.loginViaApi(username, password);
+        UserLogin.loginViaApi(username, password);
 
         //Шаги теста(UI):
         new UserDashboardPage().open().checkTitlePage()

@@ -10,7 +10,6 @@ import api.requests.steps.AccountSteps;
 import api.requests.steps.AdminSteps;
 import ui.pages.Alerts;
 import ui.pages.DepositPage;
-import ui.steps.UserLoginSteps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,7 +27,7 @@ public class DepositUiTest extends BaseUiTest {
         int accountId = account.getId();
         String accountNumber = account.getAccountNumber();
 
-        UserLoginSteps.loginViaApi(username, password);
+        UserLogin.loginViaApi(username, password);
 
         //Шаги теста(UI):
         new DepositPage().open().checkTitlePage().selectAccountByAccountNumber(accountNumber)
@@ -58,7 +57,7 @@ public class DepositUiTest extends BaseUiTest {
         int accountId = account.getId();
         String accountNumber = account.getAccountNumber();
 
-        UserLoginSteps.loginViaApi(username, password);
+        UserLogin.loginViaApi(username, password);
 
         //Шаги теста(UI):
         new DepositPage().open().checkTitlePage().selectAccountByAccountNumber(accountNumber)
