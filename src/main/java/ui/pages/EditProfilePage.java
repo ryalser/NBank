@@ -3,15 +3,18 @@ package ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
+import lombok.Getter;
 
+import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.$;
 
+@Getter
 public class EditProfilePage extends BasePage<EditProfilePage> {
     private final SelenideElement username = $(".user-name");
-    private final SelenideElement editProfileTitle = $(".container h1:contains('Edit Profile')");
+    private final SelenideElement editProfileTitle = $(Selectors.byText("✏️ Edit Profile"));
     private final SelenideElement enterNewNameInput = $(Selectors.byAttribute("placeholder", "Enter new name"));
-    private final SelenideElement saveChangesButton = $("button:contains('Save Changes')");
-    private final SelenideElement logoutButton = $("button:contains()'Logout'");
+    private final SelenideElement saveChangesButton = $(Selectors.byText("💾 Save Changes"));
+    private final SelenideElement logoutButton = $(Selectors.byText("Logout"));
 
 
     @Override
@@ -25,10 +28,9 @@ public class EditProfilePage extends BasePage<EditProfilePage> {
         return this;
     }
 
-    // Изменить имя профиля и нажать "сохранить"
+    // Ввести новое имя профиля
     public EditProfilePage changeName(String newName) {
         enterNewNameInput.setValue(newName);
-        saveChangesButton.click();
         return this;
     }
 

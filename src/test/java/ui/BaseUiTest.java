@@ -21,31 +21,32 @@ public class BaseUiTest {
 
     @BeforeAll
     public static void setupSelenoid() {
-        Configuration.remote = Config.getProperty("uiRemote");
-        Configuration.baseUrl = Config.getProperty("uiBaseUrl");
-        Configuration.browser = Config.getProperty("browser");
-        Configuration.browserVersion = Config.getProperty("browserVersion");
-        Configuration.browserSize = Config.getProperty("browserSize");;
-        Configuration.timeout = 10000;
+
+//        Configuration.remote = Config.getProperty("uiRemote");
+//        Configuration.baseUrl = Config.getProperty("uiBaseUrl");
+//        Configuration.browser = Config.getProperty("browser");
+//        Configuration.browserVersion = Config.getProperty("browserVersion");
+//        Configuration.browserSize = Config.getProperty("browserSize");;
+//        Configuration.timeout = 10000;
 
         // Создаем ChromeOptions и настраиваем selenoid options
-        ChromeOptions options = new ChromeOptions();
+//        ChromeOptions options = new ChromeOptions();
+//
+//        Map<String, Object> selenoidOptions = new HashMap<>();
+//        selenoidOptions.put("enableVNC", true);
+//        selenoidOptions.put("enableLog", true);
+//
+//        options.setCapability("selenoid:options", selenoidOptions);
+//
+//        Configuration.browserCapabilities = options;
 
-        Map<String, Object> selenoidOptions = new HashMap<>();
-        selenoidOptions.put("enableVNC", true);
-        selenoidOptions.put("enableLog", true);
-
-        options.setCapability("selenoid:options", selenoidOptions);
-
-        Configuration.browserCapabilities = options;
-
-        /* Локальный запуск с selenide
+        //Локальный запуск с selenide
         Configuration.browser = "chrome";
         Configuration.browserSize = "1920x1080";
         Configuration.headless = false; // false - показывать браузер
         Configuration.baseUrl = "http://localhost:3000";
         Configuration.timeout = 6000;
-         */
+
     }
 
     @BeforeEach
@@ -62,7 +63,7 @@ public class BaseUiTest {
 
     @AfterAll
     public static void cleanTestData() {
-        UserCleanup.cleanUsers();
+        //UserCleanup.cleanUsers();
         AdminSteps.clearPasswordsCache();
     }
 }

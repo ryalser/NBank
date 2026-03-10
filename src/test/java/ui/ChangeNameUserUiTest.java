@@ -12,6 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import api.requests.steps.AdminSteps;
 import api.requests.steps.ProfileSteps;
+import ui.pages.EditProfilePage;
+import ui.pages.UserDashboardPage;
 import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
@@ -29,34 +31,23 @@ public class ChangeNameUserUiTest extends BaseUiTest {
         String password = AdminSteps.getOriginalPassword(username);
         String newName = RandomData.getName();
 
-        // Шаги теста(UI):
         UserLoginSteps.loginViaApi(username, password);
 
-        $(Selectors.byText("User Dashboard")).shouldBe(Condition.visible);
+        // Шаги теста(UI):
+        new UserDashboardPage().open().checkTitlePage()
+                .checkNameUserInHeader(UiTestDataConstants.DEFAULT_NAME_CAPITALIZED)
+                .checkNameUserInTitle(UiTestDataConstants.DEFAULT_NAME_LOWERCASE);
 
-        $(".welcome-text").shouldBe(Condition.visible)
-                .shouldHave(Condition.text(UiMessages.Welcome.DEFAULT_GREETING));
 
-        $(".user-username").click();
-
-        $(".container.mt-5.text-center h1").shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText("✏️ Edit Profile"));
-
-        $(Selectors.byAttribute("placeholder", "Enter new name"))
-                .setValue(newName)
-                .shouldHave(Condition.value(newName));
-
-        $(Selectors.byText("💾 Save Changes"))
-                .shouldBe(Condition.visible).click();
+        new EditProfilePage().open().checkTitlePage()
+                        .changeName(newName).getSaveChangesButton().click();
 
         AlertSteps.ProfileAlert.verifyNameUpdated();
 
-        Selenide.open("/dashboard");
-
         // Ожидаемый результат / проверки UI + API:
-        $(".user-name").shouldHave(Condition.text(newName));
-        $(".welcome-text").shouldBe(Condition.visible)
-                .shouldHave(Condition.text("Welcome, " + newName + "!"));
+        new UserDashboardPage().open()
+                .checkNameUserInHeader(newName)
+                .checkNameUserInTitle(newName);
 
         GetCustomerProfileResponse profile = ProfileSteps.getProfile(username, password);
         assertEquals(newName, profile.getName());
