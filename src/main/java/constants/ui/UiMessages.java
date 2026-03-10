@@ -4,14 +4,14 @@ public class UiMessages {
     private UiMessages() {
     }
 
-    public static class Welcome {  // <- Добавить этот класс
+    public static class Welcome {
         private Welcome() {
         }
 
         public static final String DEFAULT_GREETING = "Welcome, noname!";
     }
 
-        public static class Success {
+    public static class Success {
         private Success() {
         }
 

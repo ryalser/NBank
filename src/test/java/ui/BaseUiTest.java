@@ -1,4 +1,4 @@
-package ui.tests_level_junior.iteration_2;
+package ui;
 
 import api.configs.Config;
 import com.codeborne.selenide.Configuration;

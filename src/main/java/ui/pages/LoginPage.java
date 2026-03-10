@@ -8,7 +8,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class LoginPage extends BasePage<LoginPage> {
     private final SelenideElement usernameInput = $(Selectors.byAttribute("placeholder", "username"));
     private final SelenideElement passwordInput = $(Selectors.byAttribute("placeholder","password"));
-    private final SelenideElement loginButton = $("button:contains()'Login'");
+    private final SelenideElement loginButton = $("button:contains('Login')");
 
     // Переопределяем метод по контракту от BasePage - возвращаем url даной страницы
     @Override

@@ -3,9 +3,11 @@ package ui.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
+import lombok.Getter;
 
 import static com.codeborne.selenide.Selenide.$;
 
+@Getter
 public class UserDashboardPage extends BasePage<UserDashboardPage> {
     private final SelenideElement userDashboard = $(Selectors.byText("User Dashboard"));
     private final SelenideElement username = $(".user-name");
@@ -21,9 +23,22 @@ public class UserDashboardPage extends BasePage<UserDashboardPage> {
         return "/dashboard";
     }
 
-    // Проверить имя пользователя
-    public UserDashboardPage checkNameUser(String newName) {
+    // Проверить, что мы на странице User Dashboard
+    public UserDashboardPage checkTitlePage() {
+        userDashboard.shouldBe(Condition.visible);
+        return this;
+    }
+
+    // Проверить имя пользователя в хедери страницы
+    public UserDashboardPage checkNameUserInHeader(String newName) {
         username.shouldHave(Condition.text(newName));
+        return this;
+    }
+
+    // Проверить имя пользователя в заголовке странице(приветствие)
+    public UserDashboardPage checkNameUserInTitle(String newName) {
+        welcomeText.shouldBe(Condition.visible)
+                .shouldHave(Condition.text("Welcome, " + constants.ui.UiTestDataConstants.DEFAULT_NAME_LOWERCASE + "!"));
         return this;
     }
 }

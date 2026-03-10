@@ -1,4 +1,4 @@
-package api.tests_level_senior.iteration_2;
+package api;
 
 import api.models.Accounts;
 import api.models.CreateUserResponse;

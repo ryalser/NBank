@@ -1,4 +1,4 @@
-package api.tests_level_senior.iteration_2;
+package api;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;

@@ -1,4 +1,4 @@
-package ui.tests_level_junior.iteration_2;
+package ui;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
