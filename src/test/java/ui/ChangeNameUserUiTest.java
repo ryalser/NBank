@@ -1,9 +1,5 @@
 package ui;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selectors;
-import com.codeborne.selenide.Selenide;
-import constants.ui.UiMessages;
 import constants.ui.UiTestDataConstants;
 import api.generators.RandomData;
 import api.models.CreateUserResponse;
@@ -17,7 +13,6 @@ import ui.pages.UserDashboardPage;
 import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
-import static com.codeborne.selenide.Selenide.$;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -40,7 +35,7 @@ public class ChangeNameUserUiTest extends BaseUiTest {
 
 
         new EditProfilePage().open().checkTitlePage()
-                        .changeName(newName).getSaveChangesButton().click();
+                .changeName(newName).getSaveChangesButton().click();
 
         AlertSteps.ProfileAlert.verifyNameUpdated();
 
@@ -60,34 +55,25 @@ public class ChangeNameUserUiTest extends BaseUiTest {
         CreateUserResponse user = AdminSteps.createUserAsUser();
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
-        String newName = RandomData.getNameWithoutSpace();
+        String invalidNewName = RandomData.getNameWithoutSpace();
 
-        //Шаги теста(UI):
         UserLoginSteps.loginViaApi(username, password);
 
-        $(Selectors.byText("User Dashboard")).shouldBe(Condition.visible);
-        $(".welcome-text").shouldBe(Condition.visible)
-                .shouldHave(Condition.text(UiMessages.Welcome.DEFAULT_GREETING));
-        $(Selectors.byClassName("user-username")).click();
+        //Шаги теста(UI):
+        new UserDashboardPage().open().checkTitlePage()
+                .checkNameUserInHeader(UiTestDataConstants.DEFAULT_NAME_CAPITALIZED)
+                .checkNameUserInTitle(UiTestDataConstants.DEFAULT_NAME_LOWERCASE);
 
-        $(".container.mt-5.text-center h1").shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText("✏️ Edit Profile"));
 
-        $(Selectors.byAttribute("placeholder", "Enter new name"))
-                .setValue(newName)
-                .shouldHave(Condition.value(newName));
-
-        $(Selectors.byText("💾 Save Changes"))
-                .shouldBe(Condition.visible).click();
+        new EditProfilePage().open().checkTitlePage()
+                .changeName(invalidNewName).getSaveChangesButton().click();
 
         AlertSteps.ProfileAlert.verifyIncorrrectNameError();
 
-        Selenide.open("/dashboard");
-
         // Ожидаемый результат / проверки UI + API:
-        $(".user-name").shouldHave(Condition.text(UiTestDataConstants.DEFAULT_NAME_CAPITALIZED));
-        $(".welcome-text").shouldBe(Condition.visible)
-                .shouldHave(Condition.text("Welcome, " + UiTestDataConstants.DEFAULT_NAME_LOWERCASE + "!"));
+        new UserDashboardPage().open().checkTitlePage()
+                .checkNameUserInHeader(UiTestDataConstants.DEFAULT_NAME_CAPITALIZED)
+                .checkNameUserInTitle(UiTestDataConstants.DEFAULT_NAME_LOWERCASE);
 
         GetCustomerProfileResponse profile = ProfileSteps.getProfile(username, password);
         assertNull(profile.getName());
@@ -101,33 +87,22 @@ public class ChangeNameUserUiTest extends BaseUiTest {
         String username = user.getUsername();
         String password = AdminSteps.getOriginalPassword(username);
 
+        UserLoginSteps.loginViaApi(username, password);
+
         //Шаги теста(UI):
-        Selenide.open("/login");
-        $(Selectors.byAttribute("placeholder", "Username"))
-                .shouldBe(Condition.visible).sendKeys(username);
-        $(Selectors.byAttribute("placeholder", "Password"))
-                .shouldBe(Condition.visible).sendKeys(password);
-        $("button").click();
+        new UserDashboardPage().open().checkTitlePage()
+                .checkNameUserInHeader(UiTestDataConstants.DEFAULT_NAME_CAPITALIZED)
+                .checkNameUserInTitle(UiTestDataConstants.DEFAULT_NAME_LOWERCASE);
 
-        $(Selectors.byText("User Dashboard")).shouldBe(Condition.visible);
-        $(".welcome-text").shouldBe(Condition.visible)
-                .shouldHave(Condition.text(UiMessages.Welcome.DEFAULT_GREETING));
-        $(Selectors.byClassName("user-username")).click();
-
-        $(".container.mt-5.text-center h1").shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText("✏️ Edit Profile"));
-
-        $(Selectors.byText("💾 Save Changes"))
-                .shouldBe(Condition.visible).click();
+        new EditProfilePage().open().checkTitlePage().getSaveChangesButton().click();
 
         AlertSteps.ProfileAlert.verifyEmptyNameError();
 
-        Selenide.open("/dashboard");
 
         // Ожидаемый результат / проверки UI + API:
-        $(".user-name").shouldHave(Condition.text(UiTestDataConstants.DEFAULT_NAME_CAPITALIZED));
-        $(".welcome-text").shouldBe(Condition.visible)
-                .shouldHave(Condition.text("Welcome, " + UiTestDataConstants.DEFAULT_NAME_LOWERCASE + "!"));
+        new UserDashboardPage().open().checkTitlePage()
+                .checkNameUserInHeader(UiTestDataConstants.DEFAULT_NAME_CAPITALIZED)
+                .checkNameUserInTitle(UiTestDataConstants.DEFAULT_NAME_LOWERCASE);
 
         GetCustomerProfileResponse profile = ProfileSteps.getProfile(username, password);
         assertNull(profile.getName());

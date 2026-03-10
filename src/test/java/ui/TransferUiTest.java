@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import api.requests.steps.AccountSteps;
 import api.requests.steps.AdminSteps;
 import api.requests.steps.DepositSteps;
+import ui.pages.TransferPage;
 import ui.steps.AlertSteps;
 import ui.steps.UserLoginSteps;
 
@@ -41,50 +42,24 @@ public class TransferUiTest extends BaseUiTest {
 
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
-        // Шаги теста(UI):
         UserLoginSteps.loginViaApi(username, password);
 
-        $(Selectors.byText("\uD83D\uDD04 Make a Transfer"))
-                .shouldBe(Condition.visible)
-                .click();
-
-        $(".account-selector").shouldBe(Condition.visible)
-                .selectOptionContainingText(senderAccountNumber);
-
-        $(Selectors.byAttribute("placeholder", "Enter recipient name"))
-                .shouldBe(Condition.visible).setValue(RandomData.getName());
-
-        $(Selectors.byAttribute("placeholder", "Enter recipient account number"))
-                .shouldBe(Condition.visible).setValue(receiverAccountNumber);
-
-        $(Selectors.byAttribute("placeholder", "Enter amount"))
-                .shouldBe(Condition.visible)
-                .setValue(String.valueOf(transferAmount));
-
-        $(Selectors.byId("confirmCheck"))
-                .shouldBe(Condition.visible)
-                .setSelected(true);
-
-        $(Selectors.byText("\uD83D\uDE80 Send Transfer"))
-                .shouldBe(Condition.visible)
-                .click();
-
+        // Шаги теста(UI):
+        new TransferPage().open().checkTitlePage()
+                .selectSenderAccountByAccountNumber(senderAccountNumber)
+                .enterNameRecipient(RandomData.getName())
+                .enterReceiverAccountNumber(receiverAccountNumber)
+                .enterTransferAmount(transferAmount)
+                .confirmOperation()
+                .getSendTransferButton().click();
 
         // Ожидаемый результат / Асссерты:
         AlertSteps.TransferAlert.verifyTransferSuccess(transferAmount,receiverAccountNumber);
 
         Selenide.refresh();
-        String balanceAccSender = String.format(Locale.US, "ACC%d (Balance: $%.2f)",
-                senderAccountId, depositAmount - transferAmount);
-        $(".account-selector option[value='" + senderAccountId + "']")
-                .shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText(balanceAccSender));
-
-        String balanceAccReceiver = String.format(Locale.US, "ACC%d (Balance: $%.2f)",
-                receiverAccountId, TestDataConstants.DEFAULT_ACCOUNT_BALANCE + transferAmount);
-        $(".account-selector option[value='" + receiverAccountId + "']")
-                .shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText(balanceAccReceiver));
+        new TransferPage()
+                .getBalanceAccountById(senderAccountId,depositAmount - transferAmount)
+                .getBalanceAccountById(receiverAccountId,TestDataConstants.DEFAULT_ACCOUNT_BALANCE + transferAmount);
 
         softly.assertThat(AccountSteps.getBalanceAccount(username, password, senderAccountId))
                 .as("Баланс отправителя после трансфера")
@@ -114,49 +89,25 @@ public class TransferUiTest extends BaseUiTest {
 
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
-        // Шаги теста(UI):
         UserLoginSteps.loginViaApi(username, password);
 
-        $(Selectors.byText("\uD83D\uDD04 Make a Transfer"))
-                .shouldBe(Condition.visible)
-                .click();
+        // Шаги теста(UI):
+        new TransferPage().open().checkTitlePage()
+                .selectSenderAccountByAccountNumber(senderAccountNumber)
+                .enterNameRecipient(RandomData.getName())
+                .enterReceiverAccountNumber(receiverAccountNumber)
+                .enterTransferAmount(transferAmount)
+                .confirmOperation()
+                .getSendTransferButton().click();
 
-        $(".account-selector").shouldBe(Condition.visible)
-                .selectOptionContainingText(senderAccountNumber);
-
-        $(Selectors.byAttribute("placeholder", "Enter recipient name"))
-                .shouldBe(Condition.visible).setValue(RandomData.getName());
-
-        $(Selectors.byAttribute("placeholder", "Enter recipient account number"))
-                .shouldBe(Condition.visible).setValue(receiverAccountNumber);
-
-        $(Selectors.byAttribute("placeholder", "Enter amount"))
-                .shouldBe(Condition.visible)
-                .setValue(String.valueOf(transferAmount));
-
-        $(Selectors.byId("confirmCheck"))
-                .shouldBe(Condition.visible)
-                .setSelected(true);
-
-        $(Selectors.byText("\uD83D\uDE80 Send Transfer"))
-                .shouldBe(Condition.visible)
-                .click();
 
         // Ожидаемый результат / Асссерты:
         AlertSteps.TransferAlert.verifyExceedLimitError();
 
         Selenide.refresh();
-        String balanceAccSender = String.format(Locale.US, "ACC%d (Balance: $%.2f)",
-                senderAccountId, depositAmount);
-        $(".account-selector option[value='" + senderAccountId + "']")
-                .shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText(balanceAccSender));
-
-        String balanceAccReceiver = String.format(Locale.US, "ACC%d (Balance: $%.2f)",
-                receiverAccountId, TestDataConstants.DEFAULT_ACCOUNT_BALANCE);
-        $(".account-selector option[value='" + receiverAccountId + "']")
-                .shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText(balanceAccReceiver));
+        new TransferPage()
+                .getBalanceAccountById(senderAccountId,depositAmount)
+                .getBalanceAccountById(receiverAccountId,TestDataConstants.DEFAULT_ACCOUNT_BALANCE);
 
         softly.assertThat(AccountSteps.getBalanceAccount(username, password, senderAccountId))
                 .as("Баланс отправителя после трансфера")
@@ -185,49 +136,24 @@ public class TransferUiTest extends BaseUiTest {
 
         DepositSteps.depositToAccount(username, password, senderAccountId, depositAmount);
 
-        // Шаги теста(UI):
         UserLoginSteps.loginViaApi(username, password);
 
-        $(Selectors.byText("\uD83D\uDD04 Make a Transfer"))
-                .shouldBe(Condition.visible)
-                .click();
-
-        $(".account-selector").shouldBe(Condition.visible)
-                .selectOptionContainingText(senderAccountNumber);
-
-        $(Selectors.byAttribute("placeholder", "Enter recipient name"))
-                .shouldBe(Condition.visible).setValue(RandomData.getName());
-
-        $(Selectors.byAttribute("placeholder", "Enter recipient account number"))
-                .shouldBe(Condition.visible).setValue(receiverAccountNumber);
-
-        $(Selectors.byAttribute("placeholder", "Enter amount"))
-                .shouldBe(Condition.visible)
-                .setValue(String.valueOf(transferAmount));
-
-        $(Selectors.byId("confirmCheck"))
-                .shouldBe(Condition.visible)
-                .setSelected(false);
-
-        $(Selectors.byText("\uD83D\uDE80 Send Transfer"))
-                .shouldBe(Condition.visible)
-                .click();
+        // Шаги теста(UI):
+        new TransferPage().open().checkTitlePage()
+                .selectSenderAccountByAccountNumber(senderAccountNumber)
+                .enterNameRecipient(RandomData.getName())
+                .enterReceiverAccountNumber(receiverAccountNumber)
+                .enterTransferAmount(transferAmount)
+                .doNotConfirmOperation()
+                .getSendTransferButton().click();
 
         // Ожидаемый результат / Асссерты:
         AlertSteps.TransferAlert.verifyConfirmationRequiredError();
 
         Selenide.refresh();
-        String balanceAccSender = String.format(Locale.US, "ACC%d (Balance: $%.2f)",
-                senderAccountId, depositAmount);
-        $(".account-selector option[value='" + senderAccountId + "']")
-                .shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText(balanceAccSender));
-
-        String balanceAccReceiver = String.format(Locale.US, "ACC%d (Balance: $%.2f)",
-                receiverAccountId, TestDataConstants.DEFAULT_ACCOUNT_BALANCE);
-        $(".account-selector option[value='" + receiverAccountId + "']")
-                .shouldBe(Condition.visible)
-                .shouldHave(Condition.exactText(balanceAccReceiver));
+        new TransferPage()
+                .getBalanceAccountById(senderAccountId,depositAmount)
+                .getBalanceAccountById(receiverAccountId,TestDataConstants.DEFAULT_ACCOUNT_BALANCE);
 
         softly.assertThat(AccountSteps.getBalanceAccount(username, password, senderAccountId))
                 .as("Баланс отправителя после трансфера")

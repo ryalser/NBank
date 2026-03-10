@@ -1,7 +1,9 @@
 package ui;
 
 import api.configs.Config;
+import api.models.CreateUserRequest;
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Selenide;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -12,9 +14,6 @@ import api.requests.steps.AdminSteps;
 import api.specs.RequestsSpecs;
 import ui.steps.UserLoginSteps;
 import api.utils.cleanup.UserCleanup;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class BaseUiTest {
     protected SoftAssertions softly;
