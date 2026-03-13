@@ -84,7 +84,6 @@
             <groupId>com.codeborne</groupId>
             <artifactId>selenide</artifactId>
             <version>7.14.0</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
